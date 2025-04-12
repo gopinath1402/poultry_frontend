@@ -7,6 +7,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 
 // Function to generate a unique ID
 const generateId = () => {
@@ -69,7 +70,7 @@ export default function Projects() {
                 onChange={(e) => setProjectName(e.target.value)}
               />
             </div>
-            <Button type="submit">Create Project</Button>
+            <Button type="submit"><Plus className="h-4 w-4 mr-2" />Create Project</Button>
           </form>
         </CardContent>
       </Card>
