@@ -8,6 +8,14 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 // Function to generate a unique ID
 const generateId = () => {
@@ -89,25 +97,36 @@ export default function Projects() {
       </div>
 
         <div className="flex justify-end">
-          <Card className="w-full md:w-auto">
-            <CardHeader>
-              <h2 className="text-lg font-semibold">Create New Project</h2>
-            </CardHeader>
-            <CardContent>
-              {error && <div className="text-red-500">{error}</div>}
-              <form onSubmit={handleCreateProject} className="space-y-2">
-                <div>
-                  <Input
-                    type="text"
-                    placeholder="Project Name"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                  />
-                </div>
-                <Button type="submit"><Plus className="h-4 w-4 mr-2" />Create Project</Button>
-              </form>
-            </CardContent>
-          </Card>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button><Plus className="h-4 w-4 mr-2" />Create Project</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create New Project</DialogTitle>
+                <DialogDescription>
+                  Create a new project to manage your expenses, income, and
+                  productivity.
+                </DialogDescription>
+              </DialogHeader>
+              <Card className="w-full md:w-auto">
+                <CardContent>
+                  {error && <div className="text-red-500">{error}</div>}
+                  <form onSubmit={handleCreateProject} className="space-y-2">
+                    <div>
+                      <Input
+                        type="text"
+                        placeholder="Project Name"
+                        value={projectName}
+                        onChange={(e) => setProjectName(e.target.value)}
+                      />
+                    </div>
+                    <Button type="submit">Create Project</Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </DialogContent>
+          </Dialog>
         </div>
     </div>
   );
