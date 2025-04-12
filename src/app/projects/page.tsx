@@ -96,7 +96,7 @@ export default function Projects() {
         ))}
       </div>
 
-        <div className="flex justify-end">
+        <div className="fixed bottom-4 right-4">
           <Dialog>
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" />Create Project</Button>
