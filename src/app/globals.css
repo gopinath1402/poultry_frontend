@@ -42,6 +42,14 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* WhatsApp Web Theme Colors */
+    --whatsapp-background: #eae6df;
+    --whatsapp-panel: #f0f2f5;
+    --whatsapp-border: #d3d9de;
+    --whatsapp-text: #111b21;
+    --whatsapp-secondary: #667781;
+    --whatsapp-outgoing: #d9fdd3;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -76,6 +84,14 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Dark Mode WhatsApp Web Theme Colors */
+    --whatsapp-background: #202c33;
+    --whatsapp-panel: #111b21;
+    --whatsapp-border: #3b4a54;
+    --whatsapp-text: #eae6df;
+    --whatsapp-secondary: #8696a0;
+    --whatsapp-outgoing: #005c4b;
   }
 }
 
@@ -87,5 +103,3 @@ body {
     @apply bg-background text-foreground;
   }
 }
-
-

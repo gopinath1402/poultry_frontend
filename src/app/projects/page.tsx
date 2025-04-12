@@ -48,7 +48,7 @@ export default function Projects() {
             });
 
             if (!userIdResponse.ok) {
-                const errorData = await userIdResponse.json();
+               const errorData = await userIdResponse.json();
                 const errorMessage = errorData?.message || "Failed to fetch user ID";
                 console.error("Failed to fetch user ID:", errorMessage);
                 setError(errorMessage);
@@ -150,109 +150,117 @@ export default function Projects() {
     }
 
   return (
-    <div className="h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-80 border-r flex flex-col">
-        <div className="p-4 flex items-center justify-between border-b">
-          <Avatar className="mr-2">
-            <AvatarImage src="https://picsum.photos/50/50" alt={userEmail || "User"} />
-            <AvatarFallback>{userEmail?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
-          </Avatar>
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="h-5 w-5" />
-            </Button>
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Settings className="h-5 w-5" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Create New Project</DialogTitle>
-                  <DialogDescription>
-                    Create a new project to manage your expenses, income, and
-                    productivity.
-                  </DialogDescription>
-                </DialogHeader>
-                <Card className="w-full md:w-auto">
-                  <CardContent>
-                    {error && <div className="text-red-500">{error}</div>}
-                    <form onSubmit={handleCreateProject} className="space-y-2">
-                      <div>
-                        <Input
-                          type="text"
-                          placeholder="Project Name"
-                          value={projectName}
-                          onChange={(e) => setProjectName(e.target.value)}
-                        />
-                      </div>
-                      <Button type="submit">Create Project</Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
+      <div className="h-screen flex bg-whatsapp-background">
+          {/* Sidebar */}
+          <aside
+              className="w-80 border-r border-whatsapp-border flex flex-col bg-whatsapp-panel"
+          >
+              <div className="p-4 flex items-center justify-between border-b border-whatsapp-border">
+                  <Avatar className="mr-2">
+                      <AvatarImage src="https://picsum.photos/50/50" alt={userEmail || "User"}/>
+                      <AvatarFallback>{userEmail?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex items-center space-x-2">
+                      <Button variant="ghost" size="icon" onClick={handleLogout}>
+                          <LogOut className="h-5 w-5 text-whatsapp-secondary"/>
+                      </Button>
+                      <Dialog open={open} onOpenChange={setOpen}>
+                          <DialogTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                  <Settings className="h-5 w-5 text-whatsapp-secondary"/>
+                              </Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
+                              <DialogHeader>
+                                  <DialogTitle>Create New Project</DialogTitle>
+                                  <DialogDescription>
+                                      Create a new project to manage your expenses, income, and
+                                      productivity.
+                                  </DialogDescription>
+                              </DialogHeader>
+                              <Card className="w-full md:w-auto bg-whatsapp-panel">
+                                  <CardContent>
+                                      {error && <div className="text-red-500">{error}</div>}
+                                      <form onSubmit={handleCreateProject} className="space-y-2">
+                                          <div>
+                                              <Input
+                                                  type="text"
+                                                  placeholder="Project Name"
+                                                  value={projectName}
+                                                  onChange={(e) => setProjectName(e.target.value)}
+                                              />
+                                          </div>
+                                          <Button type="submit">Create Project</Button>
+                                      </form>
+                                  </CardContent>
+                              </Card>
+                          </DialogContent>
+                      </Dialog>
+                  </div>
+              </div>
 
-        <div className="p-2">
-          <Input type="search" placeholder="Search projects..." />
-        </div>
+              <div className="p-2">
+                  <Input type="search" placeholder="Search projects..."
+                         className="bg-whatsapp-background text-whatsapp-text"/>
+              </div>
 
-        <ScrollArea className="flex-1">
-          <div className="py-2">
-            {projects.map((project) => (
-              <Button
-                key={project.id}
-                variant="ghost"
-                className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
-                onClick={() => setSelectedProject(project)}
-              >
-                {project.name}
-              </Button>
-            ))}
-          </div>
-        </ScrollArea>
-      </aside>
+              <ScrollArea className="flex-1">
+                  <div className="py-2">
+                      {projects.map((project) => (
+                          <Button
+                              key={project.id}
+                              variant="ghost"
+                              className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                              onClick={() => setSelectedProject(project)}
+                              style={{
+                                  backgroundColor: selectedProject?.id === project.id ? 'rgba(0, 0, 0, 0.08)' : 'transparent',
+                                  color: '#111b21', // WhatsApp text color
+                                  fontWeight: selectedProject?.id === project.id ? '600' : 'normal',
+                              }}
+                          >
+                              {project.name}
+                          </Button>
+                      ))}
+                  </div>
+              </ScrollArea>
+          </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-4">
-        {selectedProject ? (
-          <Card className="h-full">
-            <CardHeader>
-              <h2 className="text-lg font-semibold">{selectedProject.name}</h2>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="expenses" className="w-full">
-                <TabsList>
-                  <TabsTrigger value="expenses">Expenses</TabsTrigger>
-                  <TabsTrigger value="income">Income</TabsTrigger>
-                  <TabsTrigger value="productivity">Productivity</TabsTrigger>
-                  <TabsTrigger value="report">Report</TabsTrigger>
-                </TabsList>
-                <TabsContent value="expenses">
-                  <p>Expenses content for project {selectedProject.name}</p>
-                </TabsContent>
-                <TabsContent value="income">
-                  <p>Income content for project {selectedProject.name}</p>
-                </TabsContent>
-                <TabsContent value="productivity">
-                  <p>Productivity content for project {selectedProject.name}</p>
-                </TabsContent>
-                <TabsContent value="report">
-                  <p>Report content for project {selectedProject.name}</p>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="h-full flex items-center justify-center text-muted-foreground">
-            Select a project to view details.
-          </div>
-        )}
-      </main>
-    </div>
+          {/* Main Content */}
+          <main className="flex-1 p-4">
+              {selectedProject ? (
+                  <Card className="h-full bg-whatsapp-panel">
+                      <CardHeader>
+                          <h2 className="text-lg font-semibold text-whatsapp-text">{selectedProject.name}</h2>
+                      </CardHeader>
+                      <CardContent>
+                          <Tabs defaultValue="expenses" className="w-full">
+                              <TabsList>
+                                  <TabsTrigger value="expenses" className="text-whatsapp-secondary">Expenses</TabsTrigger>
+                                  <TabsTrigger value="income" className="text-whatsapp-secondary">Income</TabsTrigger>
+                                  <TabsTrigger value="productivity" className="text-whatsapp-secondary">Productivity</TabsTrigger>
+                                  <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
+                              </TabsList>
+                              <TabsContent value="expenses">
+                                  <p className="text-whatsapp-text">Expenses content for project {selectedProject.name}</p>
+                              </TabsContent>
+                              <TabsContent value="income">
+                                  <p className="text-whatsapp-text">Income content for project {selectedProject.name}</p>
+                              </TabsContent>
+                              <TabsContent value="productivity">
+                                  <p className="text-whatsapp-text">Productivity content for project {selectedProject.name}</p>
+                              </TabsContent>
+                              <TabsContent value="report">
+                                  <p className="text-whatsapp-text">Report content for project {selectedProject.name}</p>
+                              </TabsContent>
+                          </Tabs>
+                      </CardContent>
+                  </Card>
+              ) : (
+                  <div className="h-full flex items-center justify-center text-whatsapp-secondary">
+                      Select a project to view details.
+                  </div>
+              )}
+          </main>
+      </div>
   );
 }
