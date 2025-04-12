@@ -96,7 +96,7 @@ export default function Projects() {
             });
 
             if (!userIdResponse.ok) {
-                const errorData = await userIdResponse.json();
+               const errorData = await userIdResponse.json();
                 const errorMessage = errorData?.message || "Failed to fetch user ID";
                 console.error("Failed to fetch user ID:", errorMessage);
                 setError(errorMessage);
@@ -219,3 +219,4 @@ export default function Projects() {
     </div>
   );
 }
+
