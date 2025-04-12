@@ -6,8 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
-import { BACKEND_URL } from "@/lib/config";
 import Link from "next/link";
+
+// Function to generate a unique ID
+const generateId = () => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -16,43 +20,31 @@ export default function Projects() {
     const router = useRouter();
 
     useEffect(() => {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const isLoggedIn = true;
         if (!isLoggedIn) {
             router.push('/'); // Redirect to login if not logged in
         }
     }, [router]);
 
-  const handleCreateProject = async (e: React.FormEvent) => {
+  const handleCreateProject = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    try {
-      // Replace with your actual create project API endpoint
-      const response = await fetch(`${BACKEND_URL}/projects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: projectName }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "Failed to create project");
-        return;
-      }
-
-      const newProject = await response.json();
-      setProjects([...projects, newProject]);
-      setProjectName(""); // Clear input after successful creation
-    } catch (e: any) {
-      setError(e.message || "An unexpected error occurred");
+    if (!projectName.trim()) {
+      setError("Project name cannot be empty");
+      return;
     }
+
+    const newProject = {
+      id: generateId(), // Generate a unique ID
+      name: projectName,
+    };
+
+    setProjects([...projects, newProject]);
+    setProjectName(""); // Clear input after successful creation
   };
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('isLoggedIn');
         router.push('/'); // Redirect to login page
     };
 
