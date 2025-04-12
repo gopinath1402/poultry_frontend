@@ -44,6 +44,20 @@ export default function Projects() {
         }
 
         try {
+            // Fetch user ID from backend
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!userIdResponse.ok) {
+                throw new Error("Failed to fetch user ID");
+            }
+
+            const userIdData = await userIdResponse.json();
+            const userId = userIdData.userId; // Adjust if the response structure is different
+
             const response = await fetch(`${apiBaseUrl}/api/projects`, {
                 method: "POST",
                 headers: {
@@ -54,6 +68,7 @@ export default function Projects() {
                     name: projectName,
                     start_date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
                     end_date: null,
+                    user_id: userId,
                 }),
             });
 
