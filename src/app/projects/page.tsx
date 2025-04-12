@@ -64,7 +64,7 @@ export default function Projects() {
             const userIdData = await userIdResponse.json();
             const userId = userIdData.userId; // Adjust if the response structure is different
 
-            const response = await fetch(`${apiBaseUrl}/projects`, {
+            const response = await fetch(`${apiBaseUrl}/api/projects`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
