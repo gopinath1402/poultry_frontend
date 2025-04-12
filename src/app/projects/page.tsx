@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, Settings, LogOut } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,11 +14,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog"
 import React from 'react';
 import { useAuth } from "@/context/AuthContext";
 import {apiBaseUrl} from "@/services/api-config";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -27,7 +28,8 @@ export default function Projects() {
   const [open, setOpen] = React.useState(false)
     const router = useRouter();
     const { token, logout } = useAuth();
-      const { token: authToken, login, userEmail } = useAuth();
+    const { token: authToken, login, userEmail } = useAuth();
+    const [selectedProject, setSelectedProject] = useState<any>(null);
 
 
     useEffect(() => {
@@ -41,9 +43,6 @@ export default function Projects() {
     const fetchProjects = async () => {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
-               /* headers: {
-                    "Authorization": `Bearer ${token}`,
-                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -55,9 +54,8 @@ export default function Projects() {
             }
 
             const userIdData = await userIdResponse.json();
-            const userId = userIdData.userid; // Adjust if the response structure is different
+            const userId = userIdData.userid;
 
-            // Corrected fetch URL
             const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
                 method: "GET",
                 headers: {
@@ -92,11 +90,7 @@ export default function Projects() {
         }
 
         try {
-            // Fetch user ID from backend using email as a query parameter
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
-                /*headers: {
-                    "Authorization": `Bearer ${token}`,
-                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -108,7 +102,7 @@ export default function Projects() {
             }
 
             const userIdData = await userIdResponse.json();
-            const userId = userIdData.userid; // Adjust if the response structure is different
+            const userId = userIdData.userid;
              const startDate = new Date().toISOString().split('T')[0];
             const response = await fetch(`${apiBaseUrl}/api/projects`, {
                 method: "POST",
@@ -118,7 +112,7 @@ export default function Projects() {
                 },
                 body: JSON.stringify({
                     name: projectName,
-                    start_date: startDate, // Today's date in YYYY-MM-DD format
+                    start_date: startDate,
                     end_date:  startDate,
                     user_id: userId,
                 }),
@@ -150,17 +144,79 @@ export default function Projects() {
     }
 
   return (
-    <div className="container mx-auto py-10">
-        <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Projects</h1>
-            <Button onClick={handleLogout}>Logout</Button>
+    <div className="h-screen flex">
+      {/* Sidebar */}
+      <aside className="w-80 border-r flex flex-col">
+        <div className="p-4 flex items-center justify-between border-b">
+          <Avatar className="mr-2">
+            <AvatarImage src="https://picsum.photos/50/50" alt={userEmail || "User"} />
+            <AvatarFallback>{userEmail?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+          </Avatar>
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon" onClick={handleLogout}>
+              <LogOut className="h-5 w-5" />
+            </Button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Settings className="h-5 w-5" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Create New Project</DialogTitle>
+                  <DialogDescription>
+                    Create a new project to manage your expenses, income, and
+                    productivity.
+                  </DialogDescription>
+                </DialogHeader>
+                <Card className="w-full md:w-auto">
+                  <CardContent>
+                    {error && <div className="text-red-500">{error}</div>}
+                    <form onSubmit={handleCreateProject} className="space-y-2">
+                      <div>
+                        <Input
+                          type="text"
+                          placeholder="Project Name"
+                          value={projectName}
+                          onChange={(e) => setProjectName(e.target.value)}
+                        />
+                      </div>
+                      <Button type="submit">Create Project</Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projects.map((project) => (
-          <Card key={project.id}>
+        <div className="p-2">
+          <Input type="search" placeholder="Search projects..." />
+        </div>
+
+        <ScrollArea className="flex-1">
+          <div className="py-2">
+            {projects.map((project) => (
+              <Button
+                key={project.id}
+                variant="ghost"
+                className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                onClick={() => setSelectedProject(project)}
+              >
+                {project.name}
+              </Button>
+            ))}
+          </div>
+        </ScrollArea>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-4">
+        {selectedProject ? (
+          <Card className="h-full">
             <CardHeader>
-              <h3 className="text-lg font-semibold">{project.name}</h3>
+              <h2 className="text-lg font-semibold">{selectedProject.name}</h2>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="expenses" className="w-full">
@@ -171,55 +227,26 @@ export default function Projects() {
                   <TabsTrigger value="report">Report</TabsTrigger>
                 </TabsList>
                 <TabsContent value="expenses">
-                  <p>Expenses content for project {project.name}</p>
+                  <p>Expenses content for project {selectedProject.name}</p>
                 </TabsContent>
                 <TabsContent value="income">
-                  <p>Income content for project {project.name}</p>
+                  <p>Income content for project {selectedProject.name}</p>
                 </TabsContent>
                 <TabsContent value="productivity">
-                  <p>Productivity content for project {project.name}</p>
+                  <p>Productivity content for project {selectedProject.name}</p>
                 </TabsContent>
                 <TabsContent value="report">
-                  <p>Report content for project {project.name}</p>
+                  <p>Report content for project {selectedProject.name}</p>
                 </TabsContent>
               </Tabs>
             </CardContent>
           </Card>
-        ))}
-      </div>
-
-        <div className="fixed bottom-4 right-4">
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button><Plus className="h-6 w-6"/></Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
-                <DialogDescription>
-                  Create a new project to manage your expenses, income, and
-                  productivity.
-                </DialogDescription>
-              </DialogHeader>
-              <Card className="w-full md:w-auto">
-                <CardContent>
-                  {error && <div className="text-red-500">{error}</div>}
-                  <form onSubmit={handleCreateProject} className="space-y-2">
-                    <div>
-                      <Input
-                        type="text"
-                        placeholder="Project Name"
-                        value={projectName}
-                        onChange={(e) => setProjectName(e.target.value)}
-                      />
-                    </div>
-                    <Button type="submit">Create Project</Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </DialogContent>
-          </Dialog>
-        </div>
+        ) : (
+          <div className="h-full flex items-center justify-center text-muted-foreground">
+            Select a project to view details.
+          </div>
+        )}
+      </main>
     </div>
   );
 }
