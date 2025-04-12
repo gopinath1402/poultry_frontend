@@ -46,7 +46,7 @@ export default function Signup() {
             } else {
                 setError(data.message || "Registration failed.");
             }
-        } catch (err) {
+        } catch (err: any) {
             setError("An error occurred during registration.");
             console.error(err);
         }
@@ -105,3 +105,4 @@ export default function Signup() {
         </div>
     );
 }
+
