@@ -34,7 +34,49 @@ export default function Projects() {
         if (!token) {
             router.push('/login'); // Redirect to login if not logged in
         }
+        fetchProjects();
     }, [token, router]);
+
+    const fetchProjects = async () => {
+        try {
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!userIdResponse.ok) {
+                const errorData = await userIdResponse.json();
+                const errorMessage = errorData?.message || "Failed to fetch user ID";
+                console.error("Failed to fetch user ID:", errorMessage);
+                setError(errorMessage);
+                return;
+            }
+
+            const userIdData = await userIdResponse.json();
+            const userId = userIdData.userId; // Adjust if the response structure is different
+            const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                const errorMessage = errorData?.message || "Failed to fetch projects";
+                console.error("Failed to fetch projects:", errorMessage);
+                setError(errorMessage);
+                return;
+            }
+
+            const projectsData = await response.json();
+            setProjects(projectsData);
+        } catch (err) {
+            setError("An error occurred while fetching projects.");
+            console.error(err);
+        }
+    };
 
     const handleCreateProject = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -84,6 +126,7 @@ export default function Projects() {
                 setProjects([...projects, newProject]);
                 setProjectName(""); // Clear input after successful creation
                 setOpen(false);
+                fetchProjects();
             } else {
                 setError(newProject.message || "Failed to create project");
             }
@@ -176,4 +219,3 @@ export default function Projects() {
     </div>
   );
 }
-
