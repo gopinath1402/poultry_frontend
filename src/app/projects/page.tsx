@@ -17,6 +17,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog"
+import React from 'react';
 
 // Function to generate a unique ID
 const generateId = () => {
