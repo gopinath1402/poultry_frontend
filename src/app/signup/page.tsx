@@ -9,7 +9,7 @@ import {apiBaseUrl} from "@/services/api-config";
 
 export default function Signup() {
     const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
+    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -19,7 +19,7 @@ export default function Signup() {
         e.preventDefault();
         setError("");
 
-        if (!email || !username || !password || !confirmPassword) {
+        if (!email || !name || !password || !confirmPassword) {
             setError("Please fill in all fields.");
             return;
         }
@@ -35,7 +35,7 @@ export default function Signup() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, username, password }),
+                body: JSON.stringify({ email, name, password }),
             });
 
             const data = await response.json();
@@ -72,9 +72,9 @@ export default function Signup() {
                         <div>
                             <Input
                                 type="text"
-                                placeholder="Username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                             />
                         </div>
                         <div>
