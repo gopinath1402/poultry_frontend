@@ -17,6 +17,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 import React from 'react';
+import { useAuth } from "@/context/AuthContext";
 
 // Function to generate a unique ID
 const generateId = () => {
@@ -29,15 +30,15 @@ export default function Projects() {
   const [error, setError] = useState("");
   const [open, setOpen] = React.useState(false)
     const router = useRouter();
+    const { token, logout } = useAuth();
 
     useEffect(() => {
-        const isLoggedIn = true;
-        if (!isLoggedIn) {
-            router.push('/'); // Redirect to login if not logged in
+        if (!token) {
+            router.push('/login'); // Redirect to login if not logged in
         }
-    }, [router]);
+    }, [token, router]);
 
-  const handleCreateProject = (e: React.FormEvent) => {
+  const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -46,19 +47,39 @@ export default function Projects() {
       return;
     }
 
-    const newProject = {
-      id: generateId(), // Generate a unique ID
-      name: projectName,
-    };
+      try {
+          const response = await fetch(`http://52.12.71.105:8000/projects`, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`,
+              },
+              body: JSON.stringify({ name: projectName }),
+          });
 
-    setProjects([...projects, newProject]);
-    setProjectName(""); // Clear input after successful creation
-        setOpen(false);
+          const newProject = await response.json();
+
+          if (response.ok) {
+              setProjects([...projects, newProject]);
+              setProjectName(""); // Clear input after successful creation
+              setOpen(false);
+          } else {
+              setError(newProject.message || "Failed to create project");
+          }
+      } catch (err) {
+          setError("An error occurred while creating the project.");
+          console.error(err);
+      }
   };
 
     const handleLogout = () => {
-        router.push('/'); // Redirect to login page
+        logout(); // Call the logout function from the auth context
+        router.push('/login'); // Redirect to login page
     };
+
+    if (!token) {
+        return null; // or a loading indicator
+    }
 
   return (
     <div className="container mx-auto py-10">

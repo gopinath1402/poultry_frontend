@@ -7,7 +7,7 @@ export default function Login() {
     const router = useRouter();
 
     useEffect(() => {
-        router.push('/projects');
+        router.push('/login');
     }, [router]);
 
   return (
@@ -16,5 +16,3 @@ export default function Login() {
       </div>
   );
 }
-
-

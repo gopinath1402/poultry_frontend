@@ -5,31 +5,27 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/context/AuthContext";
 import {apiBaseUrl} from "@/services/api-config";
 
-export default function Signup() {
+export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const { login } = useAuth();
     const router = useRouter();
 
-    const handleSignup = async (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
 
-        if (!email || !password || !confirmPassword) {
-            setError("Please fill in all fields.");
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            setError("Passwords do not match.");
+        if (!email || !password) {
+            setError("Please enter your email and password.");
             return;
         }
 
         try {
-            const response = await fetch(`${apiBaseUrl}/register`, {
+            const response = await fetch(`${apiBaseUrl}/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -40,13 +36,14 @@ export default function Signup() {
             const data = await response.json();
 
             if (response.ok) {
-                // Redirect to login page after successful registration
-                router.push('/login');
+                // Assuming the backend returns a token upon successful login
+                login(data.token);
+                router.push('/projects'); // Redirect to the projects page
             } else {
-                setError(data.message || "Registration failed.");
+                setError(data.message || "Invalid credentials.");
             }
         } catch (err) {
-            setError("An error occurred during registration.");
+            setError("An error occurred while logging in.");
             console.error(err);
         }
     };
@@ -55,11 +52,11 @@ export default function Signup() {
         <div className="grid h-screen place-items-center">
             <Card className="w-96">
                 <CardHeader>
-                    <h1 className="text-2xl font-semibold">Sign Up</h1>
+                    <h1 className="text-2xl font-semibold">Login</h1>
                 </CardHeader>
                 <CardContent>
                     {error && <div className="text-red-500">{error}</div>}
-                    <form onSubmit={handleSignup} className="space-y-4">
+                    <form onSubmit={handleLogin} className="space-y-4">
                         <div>
                             <Input
                                 type="email"
@@ -76,20 +73,12 @@ export default function Signup() {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
-                        <div>
-                            <Input
-                                type="password"
-                                placeholder="Confirm Password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </div>
                         <Button type="submit" className="w-full">
-                            Sign Up
+                            Log In
                         </Button>
                     </form>
                     <div className="mt-4 text-sm">
-                        Already have an account? <a href="/login" className="text-primary">Log In</a>
+                        Don't have an account? <a href="/signup" className="text-primary">Sign up</a>
                     </div>
                 </CardContent>
             </Card>
