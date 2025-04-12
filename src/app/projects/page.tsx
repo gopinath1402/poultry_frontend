@@ -55,8 +55,8 @@ export default function Projects() {
             }
 
             const userIdData = await userIdResponse.json();
-            const userId = userIdData.userId; // Adjust if the response structure is different
-            const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
+            const userId = userIdData.userid; // Adjust if the response structure is different
+            const response = await fetch(`${apiBaseUrl}/api/projects/${userId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -65,7 +65,7 @@ export default function Projects() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                const errorMessage = errorData?.message || "Failed to fetch projects";
+                const errorMessage = errorData?.detail || errorData?.message || "Failed to fetch projects";
                 console.error("Failed to fetch projects:", errorMessage);
                 setError(errorMessage);
                 return;
@@ -105,7 +105,7 @@ export default function Projects() {
             }
 
             const userIdData = await userIdResponse.json();
-            const userId = userIdData.userId; // Adjust if the response structure is different
+            const userId = userIdData.userid; // Adjust if the response structure is different
              const startDate = new Date().toISOString().split('T')[0];
             const response = await fetch(`${apiBaseUrl}/api/projects`, {
                 method: "POST",
@@ -220,4 +220,3 @@ export default function Projects() {
     </div>
   );
 }
-
