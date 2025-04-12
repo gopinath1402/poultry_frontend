@@ -5,11 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import { BACKEND_URL } from "@/lib/config";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+    const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,9 +32,14 @@ export default function Login() {
         return;
       }
 
-      // Placeholder for successful authentication logic (e.g., store token, redirect)
-      console.log("Login successful:", { email });
-      alert("Login successful! (Functionality to redirect not implemented yet.)");
+      // Store the session (e.g., token or user info) in localStorage
+      localStorage.setItem('user', JSON.stringify({ email })); // Store user info
+      localStorage.setItem('isLoggedIn', 'true');
+
+      // Redirect to the projects page
+      router.push('/projects');
+
+
     } catch (e: any) {
       setError(e.message || "An unexpected error occurred");
     }
@@ -81,4 +88,3 @@ export default function Login() {
     </div>
   );
 }
-
