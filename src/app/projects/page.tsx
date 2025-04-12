@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -20,6 +21,7 @@ import { useAuth } from "@/context/AuthContext";
 import {apiBaseUrl} from "@/services/api-config";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "@/hooks/use-toast";
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -124,6 +126,10 @@ export default function Projects() {
                 setProjects([...projects, newProject]);
                 setProjectName(""); // Clear input after successful creation
                 setOpen(false);
+                 toast({
+                   title: "Project created successfully!",
+                   description: `Project ${projectName} has been created.`,
+                 });
                 fetchProjects();
             } else {
                 setError(newProject.message || "Failed to create project");
