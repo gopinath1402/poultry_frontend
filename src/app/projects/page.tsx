@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog"
 
 // Function to generate a unique ID
@@ -26,6 +27,7 @@ export default function Projects() {
   const [projectName, setProjectName] = useState("");
   const [projects, setProjects] = useState<any[]>([]); // Replace 'any' with your project type
   const [error, setError] = useState("");
+  const [open, setOpen] = React.useState(false)
     const router = useRouter();
 
     useEffect(() => {
@@ -51,6 +53,7 @@ export default function Projects() {
 
     setProjects([...projects, newProject]);
     setProjectName(""); // Clear input after successful creation
+        setOpen(false);
   };
 
     const handleLogout = () => {
@@ -97,7 +100,7 @@ export default function Projects() {
       </div>
 
         <div className="fixed bottom-4 right-4">
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" />Create Project</Button>
             </DialogTrigger>
