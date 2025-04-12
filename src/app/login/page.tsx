@@ -25,7 +25,7 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch(`${apiBaseUrl}/api/login`, {
+            const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -85,4 +85,5 @@ export default function Login() {
         </div>
     );
 }
+
 
