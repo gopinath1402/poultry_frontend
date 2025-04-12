@@ -46,8 +46,8 @@ export default function Projects() {
         }
 
         try {
-            // Fetch user ID from backend using email
-            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid/${userEmail}`, {
+            // Fetch user ID from backend using email as a query parameter
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                 },
@@ -64,7 +64,7 @@ export default function Projects() {
             const userIdData = await userIdResponse.json();
             const userId = userIdData.userId; // Adjust if the response structure is different
 
-            const response = await fetch(`${apiBaseUrl}/api/projects`, {
+            const response = await fetch(`${apiBaseUrl}/projects`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -176,4 +176,5 @@ export default function Projects() {
     </div>
   );
 }
+
 
