@@ -5,17 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 
-export default function Login() {
+export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     try {
-      const response = await fetch("http://backendserver/login", {
+      const response = await fetch("http://backendserver/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,13 +31,13 @@ export default function Login() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setError(errorData.message || "Login failed");
+        setError(errorData.message || "Signup failed");
         return;
       }
 
-      // Placeholder for successful authentication logic (e.g., store token, redirect)
-      console.log("Login successful:", { email });
-      alert("Login successful! (Functionality to redirect not implemented yet.)");
+      // Placeholder for successful signup logic (e.g., store token, redirect)
+      console.log("Signup successful:", { email });
+      alert("Signup successful! (Functionality to redirect not implemented yet.)");
     } catch (e: any) {
       setError(e.message || "An unexpected error occurred");
     }
@@ -40,7 +46,7 @@ export default function Login() {
   return (
     <div className="container mx-auto py-10 flex justify-center items-center h-screen">
       <div className="w-full max-w-md p-8 space-y-4 rounded shadow-md">
-        <h1 className="text-2xl font-bold text-center">Login</h1>
+        <h1 className="text-2xl font-bold text-center">Sign Up</h1>
         {error && <div className="text-red-500">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -69,12 +75,25 @@ export default function Login() {
               className="mt-1"
             />
           </div>
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <Input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="mt-1"
+            />
+          </div>
           <Button type="submit" className="w-full">
-            Log In
+            Sign Up
           </Button>
         </form>
         <p className="text-center">
-          Don't have an account? <Link href="/signup" className="text-blue-500">Sign Up</Link>
+          Already have an account? <Link href="/" className="text-blue-500">Log In</Link>
         </p>
       </div>
     </div>
