@@ -41,9 +41,9 @@ export default function Projects() {
     const fetchProjects = async () => {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
-                headers: {
+               /* headers: {
                     "Authorization": `Bearer ${token}`,
-                },
+                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -91,9 +91,9 @@ export default function Projects() {
         try {
             // Fetch user ID from backend using email as a query parameter
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
-                headers: {
+                /*headers: {
                     "Authorization": `Bearer ${token}`,
-                },
+                },*/
             });
 
             if (!userIdResponse.ok) {
