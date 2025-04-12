@@ -105,7 +105,7 @@ export default function Projects() {
 
             const userIdData = await userIdResponse.json();
             const userId = userIdData.userId; // Adjust if the response structure is different
-
+             const startDate = new Date().toISOString().split('T')[0];
             const response = await fetch(`${apiBaseUrl}/api/projects`, {
                 method: "POST",
                 headers: {
@@ -114,8 +114,8 @@ export default function Projects() {
                 },
                 body: JSON.stringify({
                     name: projectName,
-                    start_date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
-                    end_date: null,
+                    start_date: startDate, // Today's date in YYYY-MM-DD format
+                    end_date:  startDate,
                     user_id: userId,
                 }),
             });
