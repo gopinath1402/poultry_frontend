@@ -1,74 +1,55 @@
-
 "use client";
 
 import { useState } from "react";
-import { ApiData } from "@/services/api-service";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const sampleData: ApiData[] = [
-  {
-    id: 1,
-    name: "Item 1",
-    value: 10,
-  },
-  {
-    id: 2,
-    name: "Item 2",
-    value: 20,
-  },
-];
+export default function Login() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-export default function Home() {
-  const [apiEndpoint, setApiEndpoint] = useState("");
-  const [data, setData] = useState<ApiData[]>(sampleData);
-
-  const fetchData = async () => {
-    // Placeholder for actual API call
-    // const result = await fetch(apiEndpoint);
-    // const jsonData = await result.json();
-    // setData(jsonData);
-    console.log("Fetching data from:", apiEndpoint);
-    setData(sampleData);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Placeholder for authentication logic
+    console.log("Login attempt:", { username, password });
+    alert("Login functionality not implemented yet.");
   };
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-5">API Data View</h1>
-
-      {/* API Endpoint Input */}
-      <div className="mb-5 flex space-x-2">
-        <Input
-          type="url"
-          placeholder="Enter API Endpoint"
-          value={apiEndpoint}
-          onChange={(e) => setApiEndpoint(e.target.value)}
-        />
-        <Button onClick={fetchData}>Fetch Data</Button>
-      </div>
-
-      {/* Data Display (Table) */}
-      <div className="overflow-x-auto">
-        <Table>
-          <TableCaption>A list of your API data.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              {Object.keys(data[0] || {}).map((header) => (
-                <TableHead key={header}>{header}</TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((row, index) => (
-              <TableRow key={index}>
-                {Object.values(row).map((cell, cellIndex) => (
-                  <TableCell key={cellIndex}>{String(cell)}</TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+    <div className="container mx-auto py-10 flex justify-center items-center h-screen">
+      <div className="w-full max-w-md p-8 space-y-4 rounded shadow-md">
+        <h1 className="text-2xl font-bold text-center">Login</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <Input
+              type="text"
+              id="username"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <Input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+          <Button type="submit" className="w-full">
+            Log In
+          </Button>
+        </form>
       </div>
     </div>
   );
