@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog"
 import React from 'react';
 import { useAuth } from "@/context/AuthContext";
+import {apiBaseUrl} from "@/services/api-config";
 
 // Function to generate a unique ID
 const generateId = () => {
@@ -48,7 +49,7 @@ export default function Projects() {
     }
 
       try {
-          const response = await fetch(`http://52.12.71.105:8000/projects`, {
+          const response = await fetch(`${apiBaseUrl}/api/projects`, {
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
@@ -155,3 +156,4 @@ export default function Projects() {
     </div>
   );
 }
+
