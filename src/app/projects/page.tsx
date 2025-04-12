@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -261,6 +260,42 @@ export default function Projects() {
                   </div>
               )}
           </main>
+        {/* Floating Create Project Button */}
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button
+                    className="fixed bottom-4 right-4 rounded-full w-14 h-14 flex items-center justify-center shadow-lg"
+                    style={{ backgroundColor: '#008080', color: 'white' }}
+                >
+                    <Plus className="h-8 w-8" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
+                <DialogHeader>
+                    <DialogTitle>Create New Project</DialogTitle>
+                    <DialogDescription>
+                        Create a new project to manage your expenses, income, and
+                        productivity.
+                    </DialogDescription>
+                </DialogHeader>
+                <Card className="w-full md:w-auto bg-whatsapp-panel">
+                    <CardContent>
+                        {error && <div className="text-red-500">{error}</div>}
+                        <form onSubmit={handleCreateProject} className="space-y-2">
+                            <div>
+                                <Input
+                                    type="text"
+                                    placeholder="Project Name"
+                                    value={projectName}
+                                    onChange={(e) => setProjectName(e.target.value)}
+                                />
+                            </div>
+                            <Button type="submit">Create Project</Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </DialogContent>
+        </Dialog>
       </div>
   );
 }
