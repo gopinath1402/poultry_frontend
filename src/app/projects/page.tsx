@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Plus } from "lucide-react";
 import {
   Dialog,
@@ -103,7 +102,7 @@ export default function Projects() {
         <div className="fixed bottom-4 right-4">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Create Project</Button>
+              <Button><Plus className="h-6 w-6"/></Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
