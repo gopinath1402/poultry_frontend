@@ -55,25 +55,6 @@ export default function Projects() {
             <h1 className="text-2xl font-bold">Projects</h1>
             <Button onClick={handleLogout}>Logout</Button>
         </div>
-      <Card className="mb-4">
-        <CardHeader>
-          <h2 className="text-lg font-semibold">Create New Project</h2>
-        </CardHeader>
-        <CardContent>
-          {error && <div className="text-red-500">{error}</div>}
-          <form onSubmit={handleCreateProject} className="space-y-2">
-            <div>
-              <Input
-                type="text"
-                placeholder="Project Name"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-              />
-            </div>
-            <Button type="submit"><Plus className="h-4 w-4 mr-2" />Create Project</Button>
-          </form>
-        </CardContent>
-      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map((project) => (
@@ -106,6 +87,28 @@ export default function Projects() {
           </Card>
         ))}
       </div>
+
+        <div className="flex justify-end">
+          <Card className="w-full md:w-auto">
+            <CardHeader>
+              <h2 className="text-lg font-semibold">Create New Project</h2>
+            </CardHeader>
+            <CardContent>
+              {error && <div className="text-red-500">{error}</div>}
+              <form onSubmit={handleCreateProject} className="space-y-2">
+                <div>
+                  <Input
+                    type="text"
+                    placeholder="Project Name"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                  />
+                </div>
+                <Button type="submit"><Plus className="h-4 w-4 mr-2" />Create Project</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
     </div>
   );
 }
