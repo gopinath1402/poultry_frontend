@@ -6,12 +6,19 @@ import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import { BACKEND_URL } from "@/lib/config";
 import { useRouter } from "next/navigation";
+import { useEffect } from 'react';
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
     const router = useRouter();
+
+    useEffect(() => {
+        // Bypass login for now - REMOVE THIS IN PRODUCTION
+        localStorage.setItem('isLoggedIn', 'true');
+        router.push('/projects');
+    }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,3 +95,4 @@ export default function Login() {
     </div>
   );
 }
+
