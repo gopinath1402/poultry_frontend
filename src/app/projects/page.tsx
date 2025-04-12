@@ -31,10 +31,11 @@ export default function Projects() {
 
 
     useEffect(() => {
-        if (!token) {
+        if (token) {
+            fetchProjects();
+        } else {
             router.push('/login'); // Redirect to login if not logged in
         }
-        fetchProjects();
     }, [token, router]);
 
     const fetchProjects = async () => {
@@ -219,3 +220,4 @@ export default function Projects() {
     </div>
   );
 }
+
