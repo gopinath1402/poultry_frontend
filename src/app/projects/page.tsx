@@ -52,7 +52,11 @@ export default function Projects() {
             });
 
             if (!userIdResponse.ok) {
-                throw new Error("Failed to fetch user ID");
+                const errorData = await userIdResponse.json();
+                const errorMessage = errorData?.message || "Failed to fetch user ID";
+                console.error("Failed to fetch user ID:", errorMessage);
+                setError(errorMessage);
+                return;
             }
 
             const userIdData = await userIdResponse.json();
@@ -170,3 +174,4 @@ export default function Projects() {
     </div>
   );
 }
+
