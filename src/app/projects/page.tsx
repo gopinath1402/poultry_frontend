@@ -20,11 +20,6 @@ import React from 'react';
 import { useAuth } from "@/context/AuthContext";
 import {apiBaseUrl} from "@/services/api-config";
 
-// Function to generate a unique ID
-const generateId = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-};
-
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
   const [projects, setProjects] = useState<any[]>([]); // Replace 'any' with your project type
@@ -39,39 +34,43 @@ export default function Projects() {
         }
     }, [token, router]);
 
-  const handleCreateProject = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    const handleCreateProject = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
 
-    if (!projectName.trim()) {
-      setError("Project name cannot be empty");
-      return;
-    }
+        if (!projectName.trim()) {
+            setError("Project name cannot be empty");
+            return;
+        }
 
-      try {
-          const response = await fetch(`${apiBaseUrl}/api/projects`, {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`,
-              },
-              body: JSON.stringify({ name: projectName }),
-          });
+        try {
+            const response = await fetch(`${apiBaseUrl}/api/projects`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    name: projectName,
+                    start_date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+                    end_date: null,
+                }),
+            });
 
-          const newProject = await response.json();
+            const newProject = await response.json();
 
-          if (response.ok) {
-              setProjects([...projects, newProject]);
-              setProjectName(""); // Clear input after successful creation
-              setOpen(false);
-          } else {
-              setError(newProject.message || "Failed to create project");
-          }
-      } catch (err) {
-          setError("An error occurred while creating the project.");
-          console.error(err);
-      }
-  };
+            if (response.ok) {
+                setProjects([...projects, newProject]);
+                setProjectName(""); // Clear input after successful creation
+                setOpen(false);
+            } else {
+                setError(newProject.message || "Failed to create project");
+            }
+        } catch (err) {
+            setError("An error occurred while creating the project.");
+            console.error(err);
+        }
+    };
 
     const handleLogout = () => {
         logout(); // Call the logout function from the auth context
@@ -156,4 +155,3 @@ export default function Projects() {
     </div>
   );
 }
-
