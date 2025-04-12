@@ -56,12 +56,15 @@ export default function Projects() {
 
             const userIdData = await userIdResponse.json();
             const userId = userIdData.userid; // Adjust if the response structure is different
+
+            // Corrected fetch URL
             const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
                 },
             });
+
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -220,4 +223,3 @@ export default function Projects() {
     </div>
   );
 }
-
