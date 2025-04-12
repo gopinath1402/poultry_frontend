@@ -27,6 +27,8 @@ export default function Projects() {
   const [open, setOpen] = React.useState(false)
     const router = useRouter();
     const { token, logout } = useAuth();
+      const { token: authToken, login, userEmail } = useAuth();
+
 
     useEffect(() => {
         if (!token) {
@@ -44,8 +46,8 @@ export default function Projects() {
         }
 
         try {
-            // Fetch user ID from backend
-            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid`, {
+            // Fetch user ID from backend using email
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid/${userEmail}`, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                 },
@@ -174,4 +176,3 @@ export default function Projects() {
     </div>
   );
 }
-

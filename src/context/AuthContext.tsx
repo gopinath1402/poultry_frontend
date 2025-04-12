@@ -5,32 +5,40 @@ import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
     token: string | null;
-    login: (token: string) => void;
+    login: (token: string, email: string) => void;
     logout: () => void;
+    userEmail: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [token, setToken] = useState<string | null>(null);
+    const [userEmail, setUserEmail] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
-        // Check for token in local storage on initial load
+        // Check for token and email in local storage on initial load
         const storedToken = localStorage.getItem('token');
-        if (storedToken) {
+        const storedEmail = localStorage.getItem('userEmail');
+        if (storedToken && storedEmail) {
             setToken(storedToken);
+            setUserEmail(storedEmail);
         }
     }, []);
 
-    const login = (token: string) => {
+    const login = (token: string, email: string) => {
         setToken(token);
+        setUserEmail(email);
         localStorage.setItem('token', token);
+        localStorage.setItem('userEmail', email);
     };
 
     const logout = () => {
         setToken(null);
+        setUserEmail(null);
         localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
         router.push('/login');
     };
 
@@ -38,6 +46,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         token,
         login,
         logout,
+        userEmail,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

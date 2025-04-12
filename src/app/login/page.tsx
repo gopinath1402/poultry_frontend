@@ -37,7 +37,7 @@ export default function Login() {
 
             if (response.ok) {
                 // Assuming the backend returns a token upon successful login
-                login(data.token);
+                login(data.token, email);
                 router.push('/projects'); // Redirect to the projects page
             } else {
                 setError(data.message || "Invalid credentials.");
@@ -85,5 +85,3 @@ export default function Login() {
         </div>
     );
 }
-
-
