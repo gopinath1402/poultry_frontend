@@ -92,6 +92,8 @@ body {
     --whatsapp-text: #eae6df;
     --whatsapp-secondary: #8696a0;
     --whatsapp-outgoing: #005c4b;
+    /* New Background */
+     --light-green-background: #f0f2f5;
   }
 }
 
@@ -103,3 +105,4 @@ body {
     @apply bg-background text-foreground;
   }
 }
+

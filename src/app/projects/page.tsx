@@ -69,7 +69,6 @@ export default function Projects() {
                 const errorData = await response.json();
                 const errorMessage = errorData?.detail || errorData?.message || "Failed to fetch projects";
                 console.error("Failed to fetch projects:", errorMessage);
-                setError(errorMessage);
                 return;
             }
 
