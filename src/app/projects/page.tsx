@@ -21,6 +21,12 @@ import {apiBaseUrl} from "@/services/api-config";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -46,10 +52,6 @@ export default function Projects() {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
-                /*headers: {
-                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -65,10 +67,6 @@ export default function Projects() {
 
             const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
                 method: "GET",
-                /*headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },*/
             });
 
 
@@ -99,10 +97,6 @@ export default function Projects() {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
-               /* headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -120,7 +114,6 @@ export default function Projects() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                   // "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     name: projectName,
@@ -187,30 +180,59 @@ export default function Projects() {
 
               {/* Sidebar Buttons */}
               <div className="p-2 space-y-2">
-                  <Button
-                      variant="ghost"
-                      className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
-                      onClick={() => setSelectedOption("project")}
-                  >
-                      <ListChecks className="h-5 w-5 mr-2"/>
-                      Project
-                  </Button>
-                  <Button
-                      variant="ghost"
-                      className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
-                      onClick={() => setSelectedOption("project-group")}
-                  >
-                      <Users className="h-5 w-5 mr-2"/>
-                      Project Group
-                  </Button>
-                  <Button
-                      variant="ghost"
-                      className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
-                      onClick={() => setSelectedOption("news-feed")}
-                  >
-                      <Newspaper className="h-5 w-5 mr-2"/>
-                      News Feed
-                  </Button>
+                  <TooltipProvider>
+                      <Tooltip>
+                          <TooltipTrigger asChild>
+                              <Button
+                                  variant="ghost"
+                                  className="w-full justify-center rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                                  onClick={() => setSelectedOption("project")}
+                                  style={{ padding: '8px', width: 'auto' }}
+                              >
+                                  <ListChecks className="h-5 w-5 mr-0"/>
+                              </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                              Project
+                          </TooltipContent>
+                      </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                      <Tooltip>
+                          <TooltipTrigger asChild>
+                              <Button
+                                  variant="ghost"
+                                  className="w-full justify-center rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                                  onClick={() => setSelectedOption("project-group")}
+                                  style={{ padding: '8px', width: 'auto' }}
+                              >
+                                  <Users className="h-5 w-5 mr-0"/>
+                              </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                              Project Group
+                          </TooltipContent>
+                      </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                      <Tooltip>
+                          <TooltipTrigger asChild>
+                              <Button
+                                  variant="ghost"
+                                  className="w-full justify-center rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                                  onClick={() => setSelectedOption("news-feed")}
+                                  style={{ padding: '8px', width: 'auto' }}
+                              >
+                                  <Newspaper className="h-5 w-5 mr-0"/>
+                              </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                              News Feed
+                          </TooltipContent>
+                      </Tooltip>
+                  </TooltipProvider>
               </div>
 
               {/* Search Projects */}
