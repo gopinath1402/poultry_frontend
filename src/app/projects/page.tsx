@@ -31,6 +31,7 @@ export default function Projects() {
     const { token, logout } = useAuth();
     const { token: authToken, login, userEmail } = useAuth();
     const [selectedProject, setSelectedProject] = useState<any>(null);
+    const [selectedOption, setSelectedOption] = useState("project");
 
 
     useEffect(() => {
@@ -186,51 +187,67 @@ export default function Projects() {
 
               {/* Sidebar Buttons */}
               <div className="p-2 space-y-2">
-                  <Button variant="ghost" className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground">
+                  <Button
+                      variant="ghost"
+                      className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                      onClick={() => setSelectedOption("project")}
+                  >
                       <ListChecks className="h-5 w-5 mr-2"/>
                       Project
                   </Button>
-                  <Button variant="ghost" className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground">
+                  <Button
+                      variant="ghost"
+                      className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                      onClick={() => setSelectedOption("project-group")}
+                  >
                       <Users className="h-5 w-5 mr-2"/>
                       Project Group
                   </Button>
-                  <Button variant="ghost" className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground">
+                  <Button
+                      variant="ghost"
+                      className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                      onClick={() => setSelectedOption("news-feed")}
+                  >
                       <Newspaper className="h-5 w-5 mr-2"/>
                       News Feed
                   </Button>
               </div>
 
               {/* Search Projects */}
-              <div className="p-2">
-                  <Input type="search" placeholder="Search projects..."
-                         className="bg-whatsapp-background text-whatsapp-text"/>
-              </div>
+              {selectedOption === "project" && (
+                  <div className="p-2">
+                      <Input type="search" placeholder="Search projects..."
+                             className="bg-whatsapp-background text-whatsapp-text"/>
+                  </div>
+              )}
 
               {/* Project List */}
-              <ScrollArea className="flex-1">
-                  <div className="py-2">
-                      {projects.map((project) => (
-                          <Button
-                              key={project.id}
-                              variant="ghost"
-                              className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
-                              onClick={() => setSelectedProject(project)}
-                              style={{
-                                  backgroundColor: selectedProject?.id === project.id ? 'rgba(0, 0, 0, 0.08)' : 'transparent',
-                                  color: '#111b21', // WhatsApp text color
-                                  fontWeight: selectedProject?.id === project.id ? '600' : 'normal',
-                              }}
-                          >
-                              {project.name}
-                          </Button>
-                      ))}
-                  </div>
-              </ScrollArea>
+              {selectedOption === "project" && (
+                  <ScrollArea className="flex-1">
+                      <div className="py-2">
+                          {projects.map((project) => (
+                              <Button
+                                  key={project.id}
+                                  variant="ghost"
+                                  className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                                  onClick={() => setSelectedProject(project)}
+                                  style={{
+                                      backgroundColor: selectedProject?.id === project.id ? 'rgba(0, 0, 0, 0.08)' : 'transparent',
+                                      color: '#111b21', // WhatsApp text color
+                                      fontWeight: selectedProject?.id === project.id ? '600' : 'normal',
+                                  }}
+                              >
+                                  {project.name}
+                              </Button>
+                          ))}
+                      </div>
+                  </ScrollArea>
+              )}
           </aside>
 
           {/* Main Content */}
           <main className="flex-1 p-4">
-              {selectedProject ? (
+              {selectedOption === "project" && selectedProject ? (
                   <Card className="h-full bg-whatsapp-panel">
                       <CardHeader>
                           <h2 className="text-lg font-semibold text-whatsapp-text">{selectedProject.name}</h2>
@@ -258,9 +275,17 @@ export default function Projects() {
                           </Tabs>
                       </CardContent>
                   </Card>
-              ) : (
+              ) : selectedOption === "project" ? (
                   <div className="h-full flex items-center justify-center text-whatsapp-secondary">
                       Select a project to view details.
+                  </div>
+              ) : selectedOption === "project-group" ? (
+                  <div className="h-full flex items-center justify-center text-whatsapp-secondary">
+                      Project Group Content
+                  </div>
+              ) : (
+                  <div className="h-full flex items-center justify-center text-whatsapp-secondary">
+                      News Feed Content
                   </div>
               )}
           </main>
