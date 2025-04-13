@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
+import {apiBaseUrl} from "@/services/api-config";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -24,7 +25,7 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch(`https://52.12.71.105:8000/api/auth/login`, {
+            const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -84,4 +85,5 @@ export default function Login() {
         </div>
     );
 }
+
 
