@@ -44,6 +44,11 @@ export default function Projects() {
     const fetchProjects = async () => {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
+                method: "GET",
+                headers: {
+                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
             });
 
             if (!userIdResponse.ok) {
@@ -60,6 +65,7 @@ export default function Projects() {
             const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
                 method: "GET",
                 headers: {
+                    "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
             });
@@ -91,6 +97,11 @@ export default function Projects() {
 
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
             });
 
             if (!userIdResponse.ok) {
