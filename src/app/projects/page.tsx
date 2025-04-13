@@ -52,6 +52,10 @@ export default function Projects() {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
+                /*headers: {
+                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -67,6 +71,10 @@ export default function Projects() {
 
             const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
                 method: "GET",
+                /*headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },*/
             });
 
 
@@ -97,6 +105,10 @@ export default function Projects() {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
+               /* headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -114,6 +126,7 @@ export default function Projects() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                   // "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     name: projectName,
@@ -169,12 +182,31 @@ export default function Projects() {
                   </div>
 
                   <div>
-                      <Button variant="ghost" size="icon" onClick={handleLogout}>
-                          <LogOut className="h-5 w-5 text-whatsapp-secondary"/>
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                          <Settings className="h-5 w-5 text-whatsapp-secondary"/>
-                      </Button>
+                      <TooltipProvider>
+                          <Tooltip>
+                              <TooltipTrigger asChild>
+                                  <Button variant="ghost" size="icon" onClick={handleLogout}>
+                                      <LogOut className="h-5 w-5 text-whatsapp-secondary"/>
+                                  </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                  Logout
+                              </TooltipContent>
+                          </Tooltip>
+                      </TooltipProvider>
+
+                      <TooltipProvider>
+                          <Tooltip>
+                              <TooltipTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                      <Settings className="h-5 w-5 text-whatsapp-secondary"/>
+                                  </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                  Settings
+                              </TooltipContent>
+                          </Tooltip>
+                      </TooltipProvider>
                   </div>
               </div>
 
