@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
-import { Plus, Settings, LogOut } from "lucide-react";
+import { Plus, Settings, LogOut, User } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -164,55 +164,37 @@ export default function Projects() {
           <aside
               className="w-80 border-r border-whatsapp-border flex flex-col bg-whatsapp-panel"
           >
+              {/* Profile and Settings */}
               <div className="p-4 flex items-center justify-between border-b border-whatsapp-border">
-                  <Avatar className="mr-2">
-                      <AvatarImage src="https://picsum.photos/50/50" alt={userEmail || "User"}/>
-                      <AvatarFallback>{userEmail?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex items-center space-x-2">
+                  <div>
                       <Button variant="ghost" size="icon" onClick={handleLogout}>
                           <LogOut className="h-5 w-5 text-whatsapp-secondary"/>
                       </Button>
-                      <Dialog open={open} onOpenChange={setOpen}>
-                          <DialogTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                  <Settings className="h-5 w-5 text-whatsapp-secondary"/>
-                              </Button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
-                              <DialogHeader>
-                                  <DialogTitle>Create New Project</DialogTitle>
-                                  <DialogDescription>
-                                      Create a new project to manage your expenses, income, and
-                                      productivity.
-                                  </DialogDescription>
-                              </DialogHeader>
-                              <Card className="w-full md:w-auto bg-whatsapp-panel">
-                                  <CardContent>
-                                      {error && <div className="text-red-500">{error}</div>}
-                                      <form onSubmit={handleCreateProject} className="space-y-2">
-                                          <div>
-                                              <Input
-                                                  type="text"
-                                                  placeholder="Project Name"
-                                                  value={projectName}
-                                                  onChange={(e) => setProjectName(e.target.value)}
-                                              />
-                                          </div>
-                                          <Button type="submit">Create Project</Button>
-                                      </form>
-                                  </CardContent>
-                              </Card>
-                          </DialogContent>
-                      </Dialog>
+                  </div>
+
+                  {/* Avatar and User Info */}
+                  <div className="flex items-center space-x-2">
+                      <Avatar className="mr-2">
+                          <AvatarImage src="https://picsum.photos/50/50" alt={userEmail || "User"}/>
+                          <AvatarFallback>{userEmail?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                      </Avatar>
                   </div>
               </div>
 
+              {/* Project Group */}
+              <div className="p-2">
+                  <Button variant="ghost" className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground">
+                      Project Group
+                  </Button>
+              </div>
+
+              {/* Search Projects */}
               <div className="p-2">
                   <Input type="search" placeholder="Search projects..."
                          className="bg-whatsapp-background text-whatsapp-text"/>
               </div>
 
+              {/* Project List */}
               <ScrollArea className="flex-1">
                   <div className="py-2">
                       {projects.map((project) => (
@@ -232,6 +214,45 @@ export default function Projects() {
                       ))}
                   </div>
               </ScrollArea>
+
+              {/* Create Project Button - moved to top */}
+              <Dialog open={open} onOpenChange={setOpen}>
+                  <DialogTrigger asChild>
+                      <Button
+                          className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
+                          style={{
+                              color: '#111b21', // WhatsApp text color
+                          }}
+                      >
+                          Create Project
+                      </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
+                      <DialogHeader>
+                          <DialogTitle>Create New Project</DialogTitle>
+                          <DialogDescription>
+                              Create a new project to manage your expenses, income, and
+                              productivity.
+                          </DialogDescription>
+                      </DialogHeader>
+                      <Card className="w-full md:w-auto bg-whatsapp-panel">
+                          <CardContent>
+                              {error && <div className="text-red-500">{error}</div>}
+                              <form onSubmit={handleCreateProject} className="space-y-2">
+                                  <div>
+                                      <Input
+                                          type="text"
+                                          placeholder="Project Name"
+                                          value={projectName}
+                                          onChange={(e) => setProjectName(e.target.value)}
+                                      />
+                                  </div>
+                                  <Button type="submit">Create Project</Button>
+                              </form>
+                          </CardContent>
+                      </Card>
+                  </DialogContent>
+              </Dialog>
           </aside>
 
           {/* Main Content */}
@@ -270,42 +291,6 @@ export default function Projects() {
                   </div>
               )}
           </main>
-        {/* Floating Create Project Button */}
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button
-                    className="fixed bottom-4 right-4 rounded-full w-14 h-14 flex items-center justify-center shadow-lg"
-                    style={{ backgroundColor: '#008080', color: 'white' }}
-                >
-                    <Plus className="h-8 w-8" />
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
-                <DialogHeader>
-                    <DialogTitle>Create New Project</DialogTitle>
-                    <DialogDescription>
-                        Create a new project to manage your expenses, income, and
-                        productivity.
-                    </DialogDescription>
-                </DialogHeader>
-                <Card className="w-full md:w-auto bg-whatsapp-panel">
-                    <CardContent>
-                        {error && <div className="text-red-500">{error}</div>}
-                        <form onSubmit={handleCreateProject} className="space-y-2">
-                            <div>
-                                <Input
-                                    type="text"
-                                    placeholder="Project Name"
-                                    value={projectName}
-                                    onChange={(e) => setProjectName(e.target.value)}
-                                />
-                            </div>
-                            <Button type="submit">Create Project</Button>
-                        </form>
-                    </CardContent>
-                </Card>
-            </DialogContent>
-        </Dialog>
       </div>
   );
 }
