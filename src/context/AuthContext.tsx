@@ -18,9 +18,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const router = useRouter();
 
     useEffect(() => {
-        // Check for token and email in local storage on initial load
-        const storedToken = localStorage.getItem('token');
-        const storedEmail = localStorage.getItem('userEmail');
+        // Check for token and email in session storage on initial load
+        const storedToken = sessionStorage.getItem('token');
+        const storedEmail = sessionStorage.getItem('userEmail');
         if (storedToken && storedEmail) {
             setToken(storedToken);
             setUserEmail(storedEmail);
@@ -30,15 +30,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const login = (token: string, email: string) => {
         setToken(token);
         setUserEmail(email);
-        localStorage.setItem('token', token);
-        localStorage.setItem('userEmail', email);
+        sessionStorage.setItem('token', token);
+        sessionStorage.setItem('userEmail', email);
     };
 
     const logout = () => {
         setToken(null);
         setUserEmail(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('userEmail');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('userEmail');
         router.push('/login');
     };
 
@@ -59,3 +59,4 @@ export const useAuth = () => {
     }
     return context;
 };
+
