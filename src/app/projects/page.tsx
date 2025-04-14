@@ -32,7 +32,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -56,7 +56,7 @@ export default function Projects() {
     const [expenseDescription, setExpenseDescription] = useState("");
     const [expenseCategory, setExpenseCategory] = useState("");
 
-    useEffect(() => {
+     useEffect(() => {
         if (token) {
             fetchProjects();
         } else {
@@ -100,102 +100,37 @@ export default function Projects() {
             console.error(err);
         }
     };
-
-    const handleCreateProject = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
-
-        if (!projectName.trim()) {
-            setError("Project name cannot be empty");
-            return;
-        }
-
-        try {
-            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
-                method: "GET",
-            });
-
-            if (!userIdResponse.ok) {
-               const errorData = await userIdResponse.json();
-                const errorMessage = errorData?.message || "Failed to fetch user ID";
-                console.error("Failed to fetch user ID:", errorMessage);
-                setError(errorMessage);
-                return;
-            }
-
-            const userIdData = await userIdResponse.json();
-            const userId = userIdData.userid;
-             const startDate = new Date().toISOString().split('T')[0];
-            const response = await fetch(`${apiBaseUrl}/api/projects`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name: projectName,
-                    start_date: startDate,
-                    end_date:  startDate,
-                    user_id: userId,
-                }),
-            });
-
-            const newProject = await response.json();
-
-            if (response.ok) {
-                setProjects([...projects, newProject]);
-                setProjectName("");
-                setOpen(false);
-                 toast({
-                   title: "Project created successfully!",
-                   description: `Project ${projectName} has been created.`,
-                 });
-                fetchProjects();
-            } else {
-                setError(newProject.message || "Failed to create project");
-            }
-        } catch (err) {
-            setError("An error occurred while creating the project.");
-            console.error(err);
-        }
-    };
-
     const handleLogout = () => {
         logout();
         router.push('/login');
     };
 
-    if (!token) {
-        return null;
-    }
-
-    const filteredProjects = projects.filter(project =>
-        project.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const handleProjectSelect = async (project: any) => {
-        setSelectedProject(project);
-        if (project && project.id) {
-            try {
-                const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${project.id}`, {
-                    method: "GET",
-                });
-                if (expenseResponse.ok) {
-                    const expenseData = await expenseResponse.json();
-                    setExpenseData(expenseData);
-                } else {
-                    console.error("Failed to fetch expense data");
-                    setExpenseData([]);
-                }
-            } catch (err) {
-                console.error("An error occurred while fetching expense data:", err);
-                setExpenseData([]);
-            }
-        } else {
-            setExpenseData([]);
-        }
+     const handleDateSelect = (date: Date | undefined) => {
+        setDate(date);
+        setIsCalendarOpen(false);
     };
+  const filteredExpenseData = useMemo(() => {
+        if (!expenseData || !Array.isArray(expenseData)) {
+            return [];
+        }
+        if (!fromDate && !toDate) {
+            return expenseData;
+        }
 
-     const handleCreateExpense = async (e: React.FormEvent) => {
+        return expenseData.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            if (fromDate && toDate) {
+                return expenseDate >= fromDate && expenseDate <= toDate;
+            } else if (fromDate) {
+                return expenseDate >= fromDate;
+            } else if (toDate) {
+                return expenseDate <= toDate;
+            }
+            return true;
+        });
+    }, [expenseData, fromDate, toDate]);
+
+    const handleCreateExpense = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
 
@@ -255,28 +190,94 @@ export default function Projects() {
             console.error(err);
         }
     };
-        const handleDateSelect = (date: Date | undefined) => {
-        setDate(date);
-        setIsCalendarOpen(false); // Close the calendar after date selection
-    };
+    const handleCreateProject = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
 
-    const filteredExpenseData = useMemo(() => {
-        if (!fromDate && !toDate) {
-            return expenseData;
+        if (!projectName.trim()) {
+            setError("Project name cannot be empty");
+            return;
         }
 
-        return expenseData.filter(expense => {
-            const expenseDate = new Date(expense.date);
-            if (fromDate && toDate) {
-                return expenseDate >= fromDate && expenseDate <= toDate;
-            } else if (fromDate) {
-                return expenseDate >= fromDate;
-            } else if (toDate) {
-                return expenseDate <= toDate;
+        try {
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
+                method: "GET",
+            });
+
+            if (!userIdResponse.ok) {
+               const errorData = await userIdResponse.json();
+                const errorMessage = errorData?.message || "Failed to fetch user ID";
+                console.error("Failed to fetch user ID:", errorMessage);
+                setError(errorMessage);
+                return;
             }
-            return true;
-        });
-    }, [expenseData, fromDate, toDate]);
+
+            const userIdData = await userIdResponse.json();
+            const userId = userIdData.userid;
+             const startDate = new Date().toISOString().split('T')[0];
+            const response = await fetch(`${apiBaseUrl}/api/projects`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: projectName,
+                    start_date: startDate,
+                    end_date:  startDate,
+                    user_id: userId,
+                }),
+            });
+
+            const newProject = await response.json();
+
+            if (response.ok) {
+                setProjects([...projects, newProject]);
+                setProjectName("");
+                setOpen(false);
+                 toast({
+                   title: "Project created successfully!",
+                   description: `Project ${projectName} has been created.`,
+                 });
+                fetchProjects();
+            } else {
+                setError(newProject.message || "Failed to create project");
+            }
+        } catch (err) {
+            setError("An error occurred while creating the project.");
+            console.error(err);
+        }
+    };
+
+    if (!token) {
+        return null;
+    }
+
+    const filteredProjects = projects.filter(project =>
+        project.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const handleProjectSelect = async (project: any) => {
+        setSelectedProject(project);
+        if (project && project.id) {
+            try {
+                const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${project.id}`, {
+                    method: "GET",
+                });
+                if (expenseResponse.ok) {
+                    const expenseData = await expenseResponse.json();
+                    setExpenseData(expenseData);
+                } else {
+                    console.error("Failed to fetch expense data");
+                    setExpenseData([]);
+                }
+            } catch (err) {
+                console.error("An error occurred while fetching expense data:", err);
+                setExpenseData([]);
+            }
+        } else {
+            setExpenseData([]);
+        }
+    };
 
 
   return (
@@ -389,7 +390,7 @@ export default function Projects() {
                           placeholder="Search projects..."
                           className="bg-whatsapp-background text-whatsapp-text"
                           value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onChange={(e) => setProjectQuery(e.target.value)}
                       />
                   </div>
               )}
@@ -406,7 +407,7 @@ export default function Projects() {
                                   onClick={() => handleProjectSelect(project)}
                                   style={{
                                       backgroundColor: selectedProject?.id === project.id ? 'rgba(0, 0, 0, 0.08)' : 'transparent',
-                                      color: '#111b21', // WhatsApp text color
+                                      color: '#111b21',
                                       fontWeight: selectedProject?.id === project.id ? '600' : 'normal',
                                   }}
                               >
