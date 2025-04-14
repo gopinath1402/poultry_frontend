@@ -487,25 +487,27 @@ export default function Projects() {
                                                       </div>
                                                       <div>
                                                             <Label>Expense Date</Label>
-                                                             <Button
-                                                                variant="outline"
-                                                                className={cn(
-                                                                    "w-[240px] justify-start text-left font-normal",
-                                                                    !date && "text-muted-foreground"
-                                                                )}
-                                                                onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                                                            >
-                                                                {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                                            </Button>
-                                                                {isCalendarOpen && (
+                                                            <Popover>
+                                                                <PopoverTrigger asChild>
+                                                                    <Button
+                                                                        variant={"outline"}
+                                                                        className={cn(
+                                                                            "w-[240px] justify-start text-left font-normal",
+                                                                            !date && "text-muted-foreground"
+                                                                        )}
+                                                                    >
+                                                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                                                    </Button>
+                                                                </PopoverTrigger>
+                                                                <PopoverContent className="w-auto p-0" align="start">
                                                                     <Calendar
                                                                         mode="single"
                                                                         selected={date}
                                                                         onSelect={handleDateSelect}
                                                                         className={cn("rounded-md border")}
-                                                                        style={{zIndex: 100, position: 'absolute'}}
                                                                     />
-                                                                )}
+                                                                </PopoverContent>
+                                                            </Popover>
                                                         </div>
                                                         <Button type="submit">Create Expense</Button>
                                                     </form>
