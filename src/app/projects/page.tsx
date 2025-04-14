@@ -61,10 +61,13 @@ export default function Projects() {
             router.push('/login');
         }
     }, [token, router]);
+  const filteredExpenseData = useMemo(() => {
+        return expenseData;
+    }, [expenseData]);
 
     const fetchProjects = async () => {
         try {
-            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
+            const userIdResponse = await fetch(`https://52.12.71.105:8000/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
             });
 
@@ -79,7 +82,7 @@ export default function Projects() {
             const userIdData = await userIdResponse.json();
             const userId = userIdData.userid;
 
-            const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
+            const response = await fetch(`https://52.12.71.105:8000/api/projects?user_id=${userId}`, {
                 method: "GET",
             });
 
@@ -122,7 +125,7 @@ export default function Projects() {
         }
 
         try {
-            const response = await fetch(`${apiBaseUrl}/api/finance`, {
+            const response = await fetch(`https://52.12.71.105:8000/api/finance`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -149,7 +152,7 @@ export default function Projects() {
                     title: "Expense created successfully!",
                     description: `Expense ${expenseDescription} has been created.`,
                 });
-                 const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${selectedProject.id}`, {
+                 const expenseResponse = await fetch(`https://52.12.71.105:8000/api/finance/expense/${selectedProject.id}`, {
                     method: "GET",
                 });
                 if (expenseResponse.ok) {
@@ -177,7 +180,7 @@ export default function Projects() {
         }
 
         try {
-            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
+            const userIdResponse = await fetch(`https://52.12.71.105:8000/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
             });
 
@@ -192,7 +195,7 @@ export default function Projects() {
             const userIdData = await userIdResponse.json();
             const userId = userIdData.userid;
              const startDate = new Date().toISOString().split('T')[0];
-            const response = await fetch(`${apiBaseUrl}/api/projects`, {
+            const response = await fetch(`https://52.12.71.105:8000/api/projects`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -237,7 +240,7 @@ export default function Projects() {
         setSelectedProject(project);
         if (project && project.id) {
             try {
-                const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${project.id}`, {
+                const expenseResponse = await fetch(`https://52.12.71.105:8000/api/finance/expense/${project.id}`, {
                     method: "GET",
                 });
                 if (expenseResponse.ok) {
@@ -256,9 +259,6 @@ export default function Projects() {
         }
     };
 
-   const filteredExpenseData = useMemo(() => {
-        return expenseData;
-    }, [expenseData]);
 
 
   return (
@@ -416,7 +416,7 @@ export default function Projects() {
                                   <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                               </TabsList>
                               <TabsContent value="expenses">
-                                  <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
+                                   <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
                                         <DialogTrigger asChild>
                                             <Button>Add Expense</Button>
                                         </DialogTrigger>
