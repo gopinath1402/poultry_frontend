@@ -28,6 +28,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -43,7 +45,7 @@ export default function Projects() {
     const [selectedOption, setSelectedOption] = useState("project");
     const [expenseData, setExpenseData] = useState<any[]>([]);
 
-    const [expenseType, setExpenseType] = useState("");
+    const [expenseType, setExpenseType] = useState("expense");
     const [expenseAmount, setExpenseAmount] = useState(0);
     const [expenseDescription, setExpenseDescription] = useState("");
     const [expenseCategory, setExpenseCategory] = useState("");
@@ -193,7 +195,7 @@ export default function Projects() {
         e.preventDefault();
         setError("");
 
-        if (!expenseType || !expenseAmount || !expenseDescription || !expenseCategory || !expenseDate) {
+        if (!expenseAmount || !expenseDescription || !expenseCategory || !expenseDate) {
             setError("Please fill in all expense fields.");
             return;
         }
@@ -223,7 +225,7 @@ export default function Projects() {
 
             if (response.ok) {
                 setExpenseData([...expenseData, newExpense]);
-                setExpenseType("");
+                setExpenseType("expense");
                 setExpenseAmount(0);
                 setExpenseDescription("");
                 setExpenseCategory("");
@@ -443,7 +445,7 @@ export default function Projects() {
                                   <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                               </TabsList>
                               <TabsContent value="expenses">
-                                   <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
+                                  <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
                                         <DialogTrigger asChild>
                                             <Button>Add Expense</Button>
                                         </DialogTrigger>
@@ -458,14 +460,7 @@ export default function Projects() {
                                                 <CardContent>
                                                     {error && <div className="text-red-500">{error}</div>}
                                                     <form onSubmit={handleCreateExpense} className="space-y-2">
-                                                        <div>
-                                                            <Input
-                                                                type="text"
-                                                                placeholder="Expense Type"
-                                                                value={expenseType}
-                                                                onChange={(e) => setExpenseType(e.target.value)}
-                                                            />
-                                                        </div>
+                                                      
                                                         <div>
                                                             <Input
                                                                 type="number"
@@ -482,14 +477,26 @@ export default function Projects() {
                                                                 onChange={(e) => setExpenseDescription(e.target.value)}
                                                             />
                                                         </div>
-                                                        <div>
-                                                            <Input
-                                                                type="text"
-                                                                placeholder="Expense Category"
-                                                                value={expenseCategory}
-                                                                onChange={(e) => setExpenseCategory(e.target.value)}
-                                                            />
-                                                        </div>
+                                                          <div>
+                                                          <Label htmlFor="category">Expense Category</Label>
+                                                          <Select onValueChange={setExpenseCategory} defaultValue={expenseCategory}>
+                                                              <SelectTrigger className="w-[180px]">
+                                                                  <SelectValue placeholder="Select a category" />
+                                                              </SelectTrigger>
+                                                              <SelectContent>
+                                                                  <SelectItem value="egg">Egg</SelectItem>
+                                                                  <SelectItem value="feed">Feed</SelectItem>
+                                                                  <SelectItem value="medicine">Medicine</SelectItem>
+                                                                  <SelectItem value="electricity">Electricity</SelectItem>
+                                                                  <SelectItem value="labor">Labor</SelectItem>
+                                                                  <SelectItem value="other">Other</SelectItem>
+                                                                  <SelectItem value="equipment">Equipment</SelectItem>
+                                                                  <SelectItem value="chicks">Chicks</SelectItem>
+                                                                  <SelectItem value="insurance">Insurance</SelectItem>
+                                                                  <SelectItem value="transport">Transport</SelectItem>
+                                                              </SelectContent>
+                                                          </Select>
+                                                      </div>
                                                         <div>
                                                             <Input
                                                                 type="date"
@@ -589,3 +596,4 @@ export default function Projects() {
       </div>
   );
 }
+
