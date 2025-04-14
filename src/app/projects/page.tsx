@@ -48,8 +48,6 @@ export default function Projects() {
     const [selectedOption, setSelectedOption] = useState("project");
     const [expenseData, setExpenseData] = useState<any[]>([]);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
-    const [fromDate, setFromDate] = useState<Date | undefined>(null);
-    const [toDate, setToDate] = useState<Date | undefined>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     const [expenseAmount, setExpenseAmount] = useState("");
@@ -109,27 +107,6 @@ export default function Projects() {
         setDate(date);
         setIsCalendarOpen(false);
     };
-  const filteredExpenseData = useMemo(() => {
-        if (!expenseData || !Array.isArray(expenseData)) {
-            return [];
-        }
-        if (!fromDate && !toDate) {
-            return expenseData;
-        }
-
-        return expenseData.filter(expense => {
-            const expenseDate = new Date(expense.date);
-            if (fromDate && toDate) {
-                return expenseDate >= fromDate && expenseDate <= toDate;
-            } else if (fromDate) {
-                return expenseDate >= fromDate;
-            } else if (toDate) {
-                return expenseDate <= toDate;
-            }
-            return true;
-        });
-    }, [expenseData, fromDate, toDate]);
-
     const handleCreateExpense = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -278,6 +255,9 @@ export default function Projects() {
             setExpenseData([]);
         }
     };
+  const filteredExpenseData = useMemo(() => {
+        return expenseData;
+    }, [expenseData]);
 
 
   return (
@@ -390,7 +370,7 @@ export default function Projects() {
                           placeholder="Search projects..."
                           className="bg-whatsapp-background text-whatsapp-text"
                           value={searchQuery}
-                          onChange={(e) => setProjectQuery(e.target.value)}
+                          onChange={(e) => setSearchQuery(e.target.value)}
                       />
                   </div>
               )}
@@ -470,29 +450,6 @@ export default function Projects() {
                                   <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                               </TabsList>
                               <TabsContent value="expenses">
-                                      <div className="flex items-center space-x-4">
-                                        {/* From Date */}
-                                        <div>
-                                            <Label>From</Label>
-                                            <Calendar
-                                                mode="single"
-                                                selected={fromDate}
-                                                onSelect={setFromDate}
-                                                placeholder="From date"
-                                            />
-                                        </div>
-
-                                        {/* To Date */}
-                                        <div>
-                                            <Label>To</Label>
-                                            <Calendar
-                                                mode="single"
-                                                selected={toDate}
-                                                onSelect={setToDate}
-                                                placeholder="To date"
-                                            />
-                                        </div>
-                                    </div>
                                   <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
                                         <DialogTrigger asChild>
                                             <Button>Add Expense</Button>
