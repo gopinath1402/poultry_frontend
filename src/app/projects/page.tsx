@@ -439,7 +439,7 @@ export default function Projects() {
                                         </DialogTrigger>
                                         <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
                                             <DialogHeader>
-                                                <DialogTitle>Create New Expense</DialogTitle>
+                                                <DialogTitle>Add a new expense to this project.</DialogTitle>
                                                 <DialogDescription>
                                                     <span style={{ color: 'red' }}>Add a new expense to this project.</span>
                                                 </DialogDescription>
@@ -602,3 +602,4 @@ export default function Projects() {
       </div>
   );
 }
+
