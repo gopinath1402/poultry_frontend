@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -32,7 +32,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -48,6 +48,9 @@ export default function Projects() {
     const [selectedOption, setSelectedOption] = useState("project");
     const [expenseData, setExpenseData] = useState<any[]>([]);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
+    const [fromDate, setFromDate] = useState<Date | undefined>(null);
+    const [toDate, setToDate] = useState<Date | undefined>(null);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     const [expenseAmount, setExpenseAmount] = useState("");
     const [expenseDescription, setExpenseDescription] = useState("");
@@ -228,7 +231,7 @@ export default function Projects() {
                 setExpenseAmount("");
                 setExpenseDescription("");
                 setExpenseCategory("");
-                setDate(undefined);
+                setDate(new Date());
                 setExpenseOpen(false);
                 toast({
                     title: "Expense created successfully!",
@@ -252,6 +255,28 @@ export default function Projects() {
             console.error(err);
         }
     };
+        const handleDateSelect = (date: Date | undefined) => {
+        setDate(date);
+        setIsCalendarOpen(false); // Close the calendar after date selection
+    };
+
+    const filteredExpenseData = useMemo(() => {
+        if (!fromDate && !toDate) {
+            return expenseData;
+        }
+
+        return expenseData.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            if (fromDate && toDate) {
+                return expenseDate >= fromDate && expenseDate <= toDate;
+            } else if (fromDate) {
+                return expenseDate >= fromDate;
+            } else if (toDate) {
+                return expenseDate <= toDate;
+            }
+            return true;
+        });
+    }, [expenseData, fromDate, toDate]);
 
 
   return (
@@ -444,6 +469,29 @@ export default function Projects() {
                                   <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                               </TabsList>
                               <TabsContent value="expenses">
+                                      <div className="flex items-center space-x-4">
+                                        {/* From Date */}
+                                        <div>
+                                            <Label>From</Label>
+                                            <Calendar
+                                                mode="single"
+                                                selected={fromDate}
+                                                onSelect={setFromDate}
+                                                placeholder="From date"
+                                            />
+                                        </div>
+
+                                        {/* To Date */}
+                                        <div>
+                                            <Label>To</Label>
+                                            <Calendar
+                                                mode="single"
+                                                selected={toDate}
+                                                onSelect={setToDate}
+                                                placeholder="To date"
+                                            />
+                                        </div>
+                                    </div>
                                   <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
                                         <DialogTrigger asChild>
                                             <Button>Add Expense</Button>
@@ -498,12 +546,25 @@ export default function Projects() {
                                                       </div>
                                                       <div>
                                                             <Label>Expense Date</Label>
-                                                            <Calendar
-                                                                mode="single"
-                                                                selected={date}
-                                                                onSelect={setDate}
-                                                                className={cn("rounded-md border")}
-                                                            />
+                                                             <Button
+                                                                variant="outline"
+                                                                className={cn(
+                                                                    "w-[240px] justify-start text-left font-normal",
+                                                                    !date && "text-muted-foreground"
+                                                                )}
+                                                                onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                                                            >
+                                                                {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                                            </Button>
+                                                            {isCalendarOpen && (
+                                                                <Calendar
+                                                                    mode="single"
+                                                                    selected={date}
+                                                                    onSelect={handleDateSelect}
+                                                                    className={cn("rounded-md border")}
+                                                                    style={{zIndex: 100, position: 'absolute'}}
+                                                                />
+                                                            )}
                                                         </div>
                                                         <Button type="submit">Create Expense</Button>
                                                     </form>
@@ -521,7 +582,7 @@ export default function Projects() {
                                           </TableRow>
                                       </TableHeader>
                                       <TableBody>
-                                          {expenseData.map((expense) => (
+                                          {filteredExpenseData.map((expense) => (
                                               <TableRow key={expense.id}>
                                                   <TableCell>{expense.date}</TableCell>
                                                   <TableCell>{expense.category}</TableCell>
@@ -598,4 +659,3 @@ export default function Projects() {
       </div>
   );
 }
-
