@@ -42,18 +42,25 @@ export default function Projects() {
   const [error, setError] = useState("");
   const [open, setOpen] = React.useState(false)
   const [expenseOpen, setExpenseOpen] = React.useState(false)
+  const [incomeOpen, setIncomeOpen] = React.useState(false)
     const router = useRouter();
     const { token, logout } = useAuth();
     const { token: authToken, login, userEmail } = useAuth();
     const [selectedProject, setSelectedProject] = useState<any>(null);
     const [selectedOption, setSelectedOption] = useState("project");
     const [expenseData, setExpenseData] = useState<any[]>([]);
+    const [incomeData, setIncomeData] = useState<any[]>([]);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     const [expenseAmount, setExpenseAmount] = useState("");
     const [expenseDescription, setExpenseDescription] = useState("");
     const [expenseCategory, setExpenseCategory] = useState("");
+
+      const [incomeAmount, setIncomeAmount] = useState("");
+    const [incomeDescription, setIncomeDescription] = useState("");
+    const [incomeCategory, setIncomeCategory] = useState("");
+
 
      useEffect(() => {
         if (token) {
@@ -181,6 +188,67 @@ export default function Projects() {
             console.error(err);
         }
     };
+    const handleCreateIncome = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        if (!incomeAmount || !incomeDescription || !incomeCategory || !date) {
+            setError("Please fill in all income fields.");
+            return;
+        }
+
+        if (!selectedProject) {
+            setError("Please select a project to add the income to.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://52.12.71.105:8000/api/finance`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    project_id: selectedProject.id,
+                    type: "income",
+                    amount: parseFloat(incomeAmount.toString()),
+                    description: incomeDescription,
+                    category: incomeCategory,
+                    date: date ? format(date, 'yyyy-MM-dd') : null,
+                }),
+            });
+
+            const newIncome = await response.json();
+
+            if (response.ok) {
+                setIncomeAmount("");
+                setIncomeDescription("");
+                setIncomeCategory("");
+                setDate(new Date());
+                setIncomeOpen(false);
+                toast({
+                    title: "income created successfully!",
+                    description: `income ${incomeDescription} has been created.`,
+                });
+                 const incomeResponse = await fetch(`https://52.12.71.105:8000/api/finance/income/${selectedProject.id}`, {
+                    method: "GET",
+                });
+                if (incomeResponse.ok) {
+                    const incomeData = await incomeResponse.json();
+                    setIncomeData(incomeData);
+                } else {
+                    console.error("Failed to fetch expense data");
+                    setIncomeData([]);
+                }
+            } else {
+                setError(newIncome.message || "Failed to create income");
+            }
+        } catch (err) {
+            setError("An error occurred while creating the income.");
+            console.error(err);
+        }
+    };
+
 
     const handleCreateProject = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -267,12 +335,23 @@ export default function Projects() {
                     console.error("Failed to fetch expense data");
                     setExpenseData([]);
                 }
+                  const incomeResponse = await fetch(`https://52.12.71.105:8000/api/finance/income/${project.id}`, {
+                    method: "GET",
+                });
+                if (incomeResponse.ok) {
+                    const incomeData = await incomeResponse.json();
+                    setIncomeData(incomeData);
+                } else {
+                    console.error("Failed to fetch income data");
+                    setIncomeData([]);
+                }
             } catch (err) {
                 console.error("An error occurred while fetching expense data:", err);
                 setExpenseData([]);
             }
         } else {
             setExpenseData([]);
+            setIncomeData([]);
         }
     };
 
@@ -536,8 +615,102 @@ export default function Projects() {
                                       </TableBody>
                                   </Table>
                               </TabsContent>
-                              <TabsContent value="income">
-                                  <p className="text-whatsapp-text">Income content for project {selectedProject.name}</p>
+                                <TabsContent value="income">
+                                   <Dialog open={incomeOpen} onOpenChange={setIncomeOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button>Add Income</Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
+                                            <DialogHeader>
+                                                <DialogTitle>Add a new income to this project.</DialogTitle>
+                                                <DialogDescription>
+                                                    <span style={{ color: 'red' }}>Add a new income to this project.</span>
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <Card className="w-full md:w-auto bg-whatsapp-panel">
+                                                <CardContent>
+                                                    {error && <div className="text-red-500">{error}</div>}
+                                                    <form onSubmit={handleCreateIncome} className="space-y-2">
+                                                      
+                                                        <div>
+                                                            <Input
+                                                                type="number"
+                                                                placeholder="income Amount"
+                                                                value={incomeAmount.toString()}
+                                                                onChange={(e) => setIncomeAmount(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <Input
+                                                                type="text"
+                                                                placeholder="income Description"
+                                                                value={incomeDescription}
+                                                                onChange={(e) => setIncomeDescription(e.target.value)}
+                                                            />
+                                                        </div>
+                                                          <div>
+                                                          <Label htmlFor="category">income Category</Label>
+                                                          <Select onValueChange={setIncomeCategory} defaultValue={incomeCategory}>
+                                                              <SelectTrigger className="w-[180px]">
+                                                                  <SelectValue placeholder="Select a category" />
+                                                              </SelectTrigger>
+                                                              <SelectContent>
+                                                                  <SelectItem value="poultry">Poultry</SelectItem>
+                                                                  <SelectItem value="cow">Cow</SelectItem>
+                                                                  
+                                                              </SelectContent>
+                                                          </Select>
+                                                      </div>
+                                                      <div>
+                                                            <Label>income Date</Label>
+                                                            <Popover>
+                                                                <PopoverTrigger asChild>
+                                                                    <Button
+                                                                        variant={"outline"}
+                                                                        className={cn(
+                                                                            "w-[240px] justify-start text-left font-normal",
+                                                                            !date && "text-muted-foreground"
+                                                                        )}
+                                                                    >
+                                                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                                                    </Button>
+                                                                </PopoverTrigger>
+                                                                <PopoverContent className="w-auto p-0" align="start">
+                                                                    <Calendar
+                                                                        mode="single"
+                                                                        selected={date}
+                                                                        onSelect={handleDateSelect}
+                                                                        className={cn("rounded-md border")}
+                                                                    />
+                                                                </PopoverContent>
+                                                            </Popover>
+                                                        </div>
+                                                        <Button type="submit">Create income</Button>
+                                                    </form>
+                                                </CardContent>
+                                            </Card>
+                                        </DialogContent>
+                                    </Dialog>
+                                  <Table>
+                                      <TableHeader>
+                                          <TableRow>
+                                              <TableHead>Date</TableHead>
+                                              <TableHead>Category</TableHead>
+                                              <TableHead>Amount</TableHead>
+                                              <TableHead>Description</TableHead>
+                                          </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                          {incomeData.map((income) => (
+                                              <TableRow key={income.id}>
+                                                  <TableCell>{income.date}</TableCell>
+                                                  <TableCell>{income.category}</TableCell>
+                                                  <TableCell>{income.amount}</TableCell>
+                                                  <TableCell>{income.description}</TableCell>
+                                              </TableRow>
+                                          ))}
+                                      </TableBody>
+                                  </Table>
                               </TabsContent>
                               <TabsContent value="productivity">
                                   <p className="text-whatsapp-text">Productivity content for project {selectedProject.name}</p>
@@ -602,4 +775,5 @@ export default function Projects() {
       </div>
   );
 }
+
 
