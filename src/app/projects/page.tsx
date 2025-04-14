@@ -30,6 +30,9 @@ import {
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -44,19 +47,17 @@ export default function Projects() {
     const [selectedProject, setSelectedProject] = useState<any>(null);
     const [selectedOption, setSelectedOption] = useState("project");
     const [expenseData, setExpenseData] = useState<any[]>([]);
+    const [date, setDate] = React.useState<Date | undefined>(new Date());
 
-    const [expenseType, setExpenseType] = useState("expense");
-    const [expenseAmount, setExpenseAmount] = useState(0);
+    const [expenseAmount, setExpenseAmount] = useState("");
     const [expenseDescription, setExpenseDescription] = useState("");
     const [expenseCategory, setExpenseCategory] = useState("");
-    const [expenseDate, setExpenseDate] = useState("");
-
 
     useEffect(() => {
         if (token) {
             fetchProjects();
         } else {
-            router.push('/login'); // Redirect to login if not logged in
+            router.push('/login');
         }
     }, [token, router]);
 
@@ -139,7 +140,7 @@ export default function Projects() {
 
             if (response.ok) {
                 setProjects([...projects, newProject]);
-                setProjectName(""); // Clear input after successful creation
+                setProjectName("");
                 setOpen(false);
                  toast({
                    title: "Project created successfully!",
@@ -156,12 +157,12 @@ export default function Projects() {
     };
 
     const handleLogout = () => {
-        logout(); // Call the logout function from the auth context
-        router.push('/login'); // Redirect to login page
+        logout();
+        router.push('/login');
     };
 
     if (!token) {
-        return null; // or a loading indicator
+        return null;
     }
 
     const filteredProjects = projects.filter(project =>
@@ -195,7 +196,7 @@ export default function Projects() {
         e.preventDefault();
         setError("");
 
-        if (!expenseAmount || !expenseDescription || !expenseCategory || !expenseDate) {
+        if (!expenseAmount || !expenseDescription || !expenseCategory || !date) {
             setError("Please fill in all expense fields.");
             return;
         }
@@ -213,23 +214,21 @@ export default function Projects() {
                 },
                 body: JSON.stringify({
                     project_id: selectedProject.id,
-                    type: expenseType,
+                    type: "expense",
                     amount: parseFloat(expenseAmount.toString()),
                     description: expenseDescription,
                     category: expenseCategory,
-                    date: expenseDate,
+                    date: date ? format(date, 'yyyy-MM-dd') : null,
                 }),
             });
 
             const newExpense = await response.json();
 
             if (response.ok) {
-                setExpenseData([...expenseData, newExpense]);
-                setExpenseType("expense");
-                setExpenseAmount(0);
+                setExpenseAmount("");
                 setExpenseDescription("");
                 setExpenseCategory("");
-                setExpenseDate("");
+                setDate(undefined);
                 setExpenseOpen(false);
                 toast({
                     title: "Expense created successfully!",
@@ -466,7 +465,7 @@ export default function Projects() {
                                                                 type="number"
                                                                 placeholder="Expense Amount"
                                                                 value={expenseAmount.toString()}
-                                                                onChange={(e) => setExpenseAmount(parseFloat(e.target.value))}
+                                                                onChange={(e) => setExpenseAmount(e.target.value)}
                                                             />
                                                         </div>
                                                         <div>
@@ -497,12 +496,13 @@ export default function Projects() {
                                                               </SelectContent>
                                                           </Select>
                                                       </div>
-                                                        <div>
-                                                            <Input
-                                                                type="date"
-                                                                placeholder="Expense Date"
-                                                                value={expenseDate}
-                                                                onChange={(e) => setExpenseDate(e.target.value)}
+                                                      <div>
+                                                            <Label>Expense Date</Label>
+                                                            <Calendar
+                                                                mode="single"
+                                                                selected={date}
+                                                                onSelect={setDate}
+                                                                className={cn("rounded-md border")}
                                                             />
                                                         </div>
                                                         <Button type="submit">Create Expense</Button>
@@ -514,19 +514,21 @@ export default function Projects() {
                                   <Table>
                                       <TableHeader>
                                           <TableRow>
-                                              <TableHead>ID</TableHead>
-                                              <TableHead>Description</TableHead>
+                                              <TableHead>Date</TableHead>
+                                              <TableHead>Category</TableHead>
                                               <TableHead>Amount</TableHead>
+                                              <TableHead>Description</TableHead>
                                           </TableRow>
                                       </TableHeader>
                                       <TableBody>
-                                          {/*{expenseData.map((expense) => (
+                                          {expenseData.map((expense) => (
                                               <TableRow key={expense.id}>
-                                                  <TableCell>{expense.id}</TableCell>
-                                                  <TableCell>{expense.description}</TableCell>
+                                                  <TableCell>{expense.date}</TableCell>
+                                                  <TableCell>{expense.category}</TableCell>
                                                   <TableCell>{expense.amount}</TableCell>
+                                                  <TableCell>{expense.description}</TableCell>
                                               </TableRow>
-                                          ))}*/}
+                                          ))}
                                       </TableBody>
                                   </Table>
                               </TabsContent>
@@ -596,5 +598,4 @@ export default function Projects() {
       </div>
   );
 }
-
 
