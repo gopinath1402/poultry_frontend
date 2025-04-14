@@ -27,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -39,6 +40,7 @@ export default function Projects() {
     const { token: authToken, login, userEmail } = useAuth();
     const [selectedProject, setSelectedProject] = useState<any>(null);
     const [selectedOption, setSelectedOption] = useState("project");
+    const [expenseData, setExpenseData] = useState<any[]>([]);
 
 
     useEffect(() => {
@@ -53,10 +55,6 @@ export default function Projects() {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
-                /*headers: {
-                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -72,10 +70,6 @@ export default function Projects() {
 
             const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
                 method: "GET",
-                /*headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },*/
             });
 
 
@@ -106,10 +100,6 @@ export default function Projects() {
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
-               /* headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -127,7 +117,6 @@ export default function Projects() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                   // "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     name: projectName,
@@ -169,6 +158,30 @@ export default function Projects() {
     const filteredProjects = projects.filter(project =>
         project.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleProjectSelect = async (project: any) => {
+        setSelectedProject(project);
+        if (project && project.id) {
+            try {
+                const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${project.id}`, {
+                    method: "GET",
+                });
+                if (expenseResponse.ok) {
+                    const expenseData = await expenseResponse.json();
+                    setExpenseData(expenseData);
+                } else {
+                    console.error("Failed to fetch expense data");
+                    setExpenseData([]);
+                }
+            } catch (err) {
+                console.error("An error occurred while fetching expense data:", err);
+                setExpenseData([]);
+            }
+        } else {
+            setExpenseData([]);
+        }
+    };
+
 
   return (
       <div className="h-screen flex bg-whatsapp-background">
@@ -294,7 +307,7 @@ export default function Projects() {
                                   key={project.id}
                                   variant="ghost"
                                   className="w-full justify-start rounded-none hover:bg-secondary hover:text-secondary-foreground"
-                                  onClick={() => setSelectedProject(project)}
+                                  onClick={() => handleProjectSelect(project)}
                                   style={{
                                       backgroundColor: selectedProject?.id === project.id ? 'rgba(0, 0, 0, 0.08)' : 'transparent',
                                       color: '#111b21', // WhatsApp text color
@@ -325,7 +338,24 @@ export default function Projects() {
                                   <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                               </TabsList>
                               <TabsContent value="expenses">
-                                  <p className="text-whatsapp-text">Expenses content for project {selectedProject.name}</p>
+                                  <Table>
+                                      <TableHeader>
+                                          <TableRow>
+                                              <TableHead>ID</TableHead>
+                                              <TableHead>Description</TableHead>
+                                              <TableHead>Amount</TableHead>
+                                          </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                          {expenseData.map((expense) => (
+                                              <TableRow key={expense.id}>
+                                                  <TableCell>{expense.id}</TableCell>
+                                                  <TableCell>{expense.description}</TableCell>
+                                                  <TableCell>{expense.amount}</TableCell>
+                                              </TableRow>
+                                          ))}
+                                      </TableBody>
+                                  </Table>
                               </TabsContent>
                               <TabsContent value="income">
                                   <p className="text-whatsapp-text">Income content for project {selectedProject.name}</p>
