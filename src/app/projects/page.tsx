@@ -465,7 +465,7 @@ export default function Projects() {
                                                             <Input
                                                                 type="number"
                                                                 placeholder="Expense Amount"
-                                                                value={expenseAmount}
+                                                                value={expenseAmount.toString()}
                                                                 onChange={(e) => setExpenseAmount(parseFloat(e.target.value))}
                                                             />
                                                         </div>
@@ -596,4 +596,5 @@ export default function Projects() {
       </div>
   );
 }
+
 
