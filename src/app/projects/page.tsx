@@ -255,7 +255,8 @@ export default function Projects() {
             setExpenseData([]);
         }
     };
-  const filteredExpenseData = useMemo(() => {
+
+   const filteredExpenseData = useMemo(() => {
         return expenseData;
     }, [expenseData]);
 
