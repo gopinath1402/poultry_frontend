@@ -31,16 +31,23 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
-  const [projects, setProjects] = useState<any[]>([]); // Replace 'any' with your project type
+  const [projects, setProjects] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [open, setOpen] = React.useState(false)
+  const [expenseOpen, setExpenseOpen] = React.useState(false)
     const router = useRouter();
     const { token, logout } = useAuth();
     const { token: authToken, login, userEmail } = useAuth();
     const [selectedProject, setSelectedProject] = useState<any>(null);
     const [selectedOption, setSelectedOption] = useState("project");
     const [expenseData, setExpenseData] = useState<any[]>([]);
+
+    const [expenseType, setExpenseType] = useState("");
+    const [expenseAmount, setExpenseAmount] = useState(0);
+    const [expenseDescription, setExpenseDescription] = useState("");
+    const [expenseCategory, setExpenseCategory] = useState("");
+    const [expenseDate, setExpenseDate] = useState("");
 
 
     useEffect(() => {
@@ -179,6 +186,69 @@ export default function Projects() {
             }
         } else {
             setExpenseData([]);
+        }
+    };
+
+     const handleCreateExpense = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        if (!expenseType || !expenseAmount || !expenseDescription || !expenseCategory || !expenseDate) {
+            setError("Please fill in all expense fields.");
+            return;
+        }
+
+        if (!selectedProject) {
+            setError("Please select a project to add the expense to.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${apiBaseUrl}/api/finance`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    project_id: selectedProject.id,
+                    type: expenseType,
+                    amount: parseFloat(expenseAmount.toString()),
+                    description: expenseDescription,
+                    category: expenseCategory,
+                    date: expenseDate,
+                }),
+            });
+
+            const newExpense = await response.json();
+
+            if (response.ok) {
+                setExpenseData([...expenseData, newExpense]);
+                setExpenseType("");
+                setExpenseAmount(0);
+                setExpenseDescription("");
+                setExpenseCategory("");
+                setExpenseDate("");
+                setExpenseOpen(false);
+                toast({
+                    title: "Expense created successfully!",
+                    description: `Expense ${expenseDescription} has been created.`,
+                });
+                 const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${selectedProject.id}`, {
+                    method: "GET",
+                });
+                if (expenseResponse.ok) {
+                    const expenseData = await expenseResponse.json();
+                    setExpenseData(expenseData);
+                } else {
+                    console.error("Failed to fetch expense data");
+                    setExpenseData([]);
+                }
+            } else {
+                setError(newExpense.message || "Failed to create expense");
+            }
+        } catch (err) {
+            setError("An error occurred while creating the expense.");
+            console.error(err);
         }
     };
 
@@ -373,7 +443,67 @@ export default function Projects() {
                                   <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                               </TabsList>
                               <TabsContent value="expenses">
-                                   <Button>Add Expense</Button>
+                                   <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button>Add Expense</Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
+                                            <DialogHeader>
+                                                <DialogTitle>Create New Expense</DialogTitle>
+                                                <DialogDescription>
+                                                    Add a new expense to this project.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <Card className="w-full md:w-auto bg-whatsapp-panel">
+                                                <CardContent>
+                                                    {error && <div className="text-red-500">{error}</div>}
+                                                    <form onSubmit={handleCreateExpense} className="space-y-2">
+                                                        <div>
+                                                            <Input
+                                                                type="text"
+                                                                placeholder="Expense Type"
+                                                                value={expenseType}
+                                                                onChange={(e) => setExpenseType(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <Input
+                                                                type="number"
+                                                                placeholder="Expense Amount"
+                                                                value={expenseAmount}
+                                                                onChange={(e) => setExpenseAmount(parseFloat(e.target.value))}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <Input
+                                                                type="text"
+                                                                placeholder="Expense Description"
+                                                                value={expenseDescription}
+                                                                onChange={(e) => setExpenseDescription(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <Input
+                                                                type="text"
+                                                                placeholder="Expense Category"
+                                                                value={expenseCategory}
+                                                                onChange={(e) => setExpenseCategory(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <Input
+                                                                type="date"
+                                                                placeholder="Expense Date"
+                                                                value={expenseDate}
+                                                                onChange={(e) => setExpenseDate(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <Button type="submit">Create Expense</Button>
+                                                    </form>
+                                                </CardContent>
+                                            </Card>
+                                        </DialogContent>
+                                    </Dialog>
                                   <Table>
                                       <TableHeader>
                                           <TableRow>
@@ -419,6 +549,43 @@ export default function Projects() {
                   </div>
               )}
           </main>
+
+        {/* Floating Create Project Button */}
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button
+                    className="fixed bottom-4 right-4 rounded-full w-14 h-14 flex items-center justify-center shadow-lg"
+                    style={{ backgroundColor: '#008080', color: 'white' }}
+                >
+                    <Plus className="h-8 w-8" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
+                <DialogHeader>
+                    <DialogTitle>Create New Project</DialogTitle>
+                    <DialogDescription>
+                        Create a new project to manage your expenses, income, and
+                        productivity.
+                    </DialogDescription>
+                </DialogHeader>
+                <Card className="w-full md:w-auto bg-whatsapp-panel">
+                    <CardContent>
+                        {error && <div className="text-red-500">{error}</div>}
+                        <form onSubmit={handleCreateProject} className="space-y-2">
+                            <div>
+                                <Input
+                                    type="text"
+                                    placeholder="Project Name"
+                                    value={projectName}
+                                    onChange={(e) => setProjectName(e.target.value)}
+                                />
+                            </div>
+                            <Button type="submit">Create Project</Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </DialogContent>
+        </Dialog>
       </div>
   );
 }
