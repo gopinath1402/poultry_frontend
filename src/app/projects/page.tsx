@@ -69,7 +69,7 @@ export default function Projects() {
 
     const fetchProjects = async () => {
         try {
-            const userIdResponse = await fetch(`https://52.12.71.105:8000/api/auth/userid?email=${userEmail}`, {
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
                 /*headers: {
                      "Content-Type": "application/json",
@@ -88,7 +88,7 @@ export default function Projects() {
             const userIdData = await userIdResponse.json();
             const userId = userIdData.userid;
 
-            const response = await fetch(`https://52.12.71.105:8000/api/projects?user_id=${userId}`, {
+            const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
                 method: "GET",
                /* headers: {
                     "Content-Type": "application/json",
@@ -192,7 +192,7 @@ export default function Projects() {
         }
 
         try {
-            const userIdResponse = await fetch(`https://52.12.71.105:8000/api/auth/userid?email=${userEmail}`, {
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
                /* headers: {
                     "Content-Type": "application/json",
@@ -441,7 +441,7 @@ export default function Projects() {
                                             <DialogHeader>
                                                 <DialogTitle>Create New Expense</DialogTitle>
                                                 <DialogDescription>
-                                                    Add a new expense to this project.
+                                                    <span style={{ color: 'red' }}>Add a new expense to this project.</span>
                                                 </DialogDescription>
                                             </DialogHeader>
                                             <Card className="w-full md:w-auto bg-whatsapp-panel">
