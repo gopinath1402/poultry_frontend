@@ -373,6 +373,7 @@ export default function Projects() {
                                   <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                               </TabsList>
                               <TabsContent value="expenses">
+                                   <Button>Add Expense</Button>
                                   <Table>
                                       <TableHeader>
                                           <TableRow>
@@ -382,13 +383,13 @@ export default function Projects() {
                                           </TableRow>
                                       </TableHeader>
                                       <TableBody>
-                                          {expenseData.map((expense) => (
+                                          {/*{expenseData.map((expense) => (
                                               <TableRow key={expense.id}>
                                                   <TableCell>{expense.id}</TableCell>
                                                   <TableCell>{expense.description}</TableCell>
                                                   <TableCell>{expense.amount}</TableCell>
                                               </TableRow>
-                                          ))}
+                                          ))}*/}
                                       </TableBody>
                                   </Table>
                               </TabsContent>
