@@ -31,6 +31,7 @@ import {
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
   const [projects, setProjects] = useState<any[]>([]); // Replace 'any' with your project type
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [open, setOpen] = React.useState(false)
     const router = useRouter();
@@ -165,6 +166,10 @@ export default function Projects() {
         return null; // or a loading indicator
     }
 
+    const filteredProjects = projects.filter(project =>
+        project.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
   return (
       <div className="h-screen flex bg-whatsapp-background">
           {/* Sidebar */}
@@ -270,8 +275,13 @@ export default function Projects() {
               {/* Search Projects */}
               {selectedOption === "project" && (
                   <div className="p-2">
-                      <Input type="search" placeholder="Search projects..."
-                             className="bg-whatsapp-background text-whatsapp-text"/>
+                      <Input
+                          type="search"
+                          placeholder="Search projects..."
+                          className="bg-whatsapp-background text-whatsapp-text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                      />
                   </div>
               )}
 
@@ -279,7 +289,7 @@ export default function Projects() {
               {selectedOption === "project" && (
                   <ScrollArea className="flex-1">
                       <div className="py-2">
-                          {projects.map((project) => (
+                          {filteredProjects.map((project) => (
                               <Button
                                   key={project.id}
                                   variant="ghost"
