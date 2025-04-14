@@ -33,6 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export default function Projects() {
   const [projectName, setProjectName] = useState("");
@@ -61,7 +62,8 @@ export default function Projects() {
             router.push('/login');
         }
     }, [token, router]);
-  const filteredExpenseData = useMemo(() => {
+
+      const filteredExpenseData = useMemo(() => {
         return expenseData;
     }, [expenseData]);
 
@@ -69,6 +71,10 @@ export default function Projects() {
         try {
             const userIdResponse = await fetch(`https://52.12.71.105:8000/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
+                /*headers: {
+                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -84,6 +90,10 @@ export default function Projects() {
 
             const response = await fetch(`https://52.12.71.105:8000/api/projects?user_id=${userId}`, {
                 method: "GET",
+               /* headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },*/
             });
 
 
@@ -110,6 +120,7 @@ export default function Projects() {
         setDate(date);
         setIsCalendarOpen(false);
     };
+
     const handleCreateExpense = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -170,6 +181,7 @@ export default function Projects() {
             console.error(err);
         }
     };
+
     const handleCreateProject = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -182,6 +194,10 @@ export default function Projects() {
         try {
             const userIdResponse = await fetch(`https://52.12.71.105:8000/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
+               /* headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },*/
             });
 
             if (!userIdResponse.ok) {
@@ -199,6 +215,7 @@ export default function Projects() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                   // "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     name: projectName,
