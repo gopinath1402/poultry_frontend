@@ -452,6 +452,7 @@ export default function Projects() {
                                             </Card>
                                         </DialogContent>
                                     </Dialog>
+                                    <ScrollArea>
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
@@ -494,6 +495,7 @@ export default function Projects() {
                                             ))}
                                         </TableBody>
                                     </Table>
+                                    </ScrollArea>
                                 </TabsContent>
                                 <TabsContent value="income">
                                     <p className="text-whatsapp-text">Income content for project {selectedProject.name}</p>
