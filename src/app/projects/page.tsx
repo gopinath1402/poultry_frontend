@@ -8,12 +8,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import { Plus, Settings, LogOut, ChevronsUpDown } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import React from 'react';
 import { useAuth } from "@/context/AuthContext";
@@ -31,218 +31,218 @@ import { format } from "date-fns";
 const expenseCategories = ['egg', 'feed', 'medicine', 'electricity', 'labor', 'other', 'equipment', 'chicks', 'insurance', 'transport'];
 
 export default function Projects() {
-  const [projectName, setProjectName] = useState("");
-  const [projects, setProjects] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
-  const [open, setOpen] = React.useState(false);
-  const [expenseOpen, setExpenseOpen] = React.useState(false);
-  const router = useRouter();
-  const { token, logout, userEmail } = useAuth();
-  const [selectedProject, setSelectedProject] = useState<any>(null);
-  const [expenseAmount, setExpenseAmount] = useState("");
-  const [expenseDescription, setExpenseDescription] = useState("");
-  const [expenseCategory, setExpenseCategory] = useState("");
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+    const [projectName, setProjectName] = useState("");
+    const [projects, setProjects] = useState<any[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [error, setError] = useState("");
+    const [open, setOpen] = React.useState(false);
+    const [expenseOpen, setExpenseOpen] = React.useState(false);
+    const router = useRouter();
+    const { token, logout, userEmail } = useAuth();
+    const [selectedProject, setSelectedProject] = useState<any>(null);
+    const [expenseAmount, setExpenseAmount] = useState("");
+    const [expenseDescription, setExpenseDescription] = useState("");
+    const [expenseCategory, setExpenseCategory] = useState("");
+    const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [expenseData, setExpenseData] = useState<any[]>([]);
     const [sortingDirection, setSortingDirection] = useState<'asc' | 'desc' | null>('desc');
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  useEffect(() => {
-    if (token && userEmail) {
-      fetchProjects();
-    } else {
-      router.push('/login');
-    }
-  }, [token, router, userEmail]);
-
-  const fetchProjects = async () => {
-    try {
-      const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
-        method: "GET",
-      });
-
-      if (!userIdResponse.ok) {
-        const errorData = await userIdResponse.json();
-        const errorMessage = errorData?.message || "Failed to fetch user ID";
-        console.error("Failed to fetch user ID:", errorMessage);
-        setError(errorMessage);
-        return;
-      }
-
-      const userIdData = await userIdResponse.json();
-      const userId = userIdData.userid;
-
-      const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
-        method: "GET",
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        const errorMessage = errorData?.detail || errorData?.message || "Failed to fetch projects";
-        console.error("Failed to fetch projects:", errorMessage);
-        setError(errorMessage);
-        return;
-      }
-
-      const projectsData = await response.json();
-      setProjects(projectsData);
-    } catch (err) {
-      setError("An error occurred while fetching projects.");
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    if (selectedProject) {
-      fetchExpenseData();
-    }
-  }, [selectedProject]);
-
-  const handleCreateProject = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!projectName.trim()) {
-      setError("Project name cannot be empty");
-      return;
-    }
-
-    try {
-      const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
-        method: "GET",
-      });
-
-      if (!userIdResponse.ok) {
-        const errorData = await userIdResponse.json();
-        const errorMessage = errorData?.message || "Failed to fetch user ID";
-        console.error("Failed to fetch user ID:", errorMessage);
-        setError(errorMessage);
-        return;
-      }
-
-      const userIdData = await userIdResponse.json();
-      const userId = userIdData.userid;
-      const startDate = new Date().toISOString().split('T')[0];
-
-      const response = await fetch(`${apiBaseUrl}/api/projects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: projectName,
-          start_date: startDate,
-          end_date: startDate,
-          user_id: userId,
-        }),
-      });
-
-      const newProject = await response.json();
-
-      if (response.ok) {
-        setProjects([...projects, newProject]);
-        setProjectName("");
-        setOpen(false);
-        toast({
-          title: "Project created successfully!",
-          description: `Project ${projectName} has been created.`,
-        });
-        fetchProjects();
-      } else {
-        setError(newProject.message || "Failed to create project");
-      }
-    } catch (err) {
-      setError("An error occurred while creating the project.");
-      console.error(err);
-    }
-  };
-
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
-
-  const fetchExpenseData = async () => {
-    if (selectedProject && selectedProject.id) {
-      try {
-        const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${selectedProject.id}`, {
-          method: "GET",
-        });
-
-        if (expenseResponse.ok) {
-          const expenseData = await expenseResponse.json();
-
-          // Sort expenses by date in descending order by default
-          const sortedData = [...expenseData].sort((a, b) => {
-              return new Date(b.date).getTime() - new Date(a.date).getTime();
-          });
-          setExpenseData(sortedData);
+    useEffect(() => {
+        if (token && userEmail) {
+            fetchProjects();
         } else {
-          console.error("Failed to fetch expense data");
-          setExpenseData([]);
+            router.push('/login');
         }
-      } catch (err) {
-        console.error("An error occurred while fetching expense data:", err);
-        setExpenseData([]);
-      }
-    } else {
-      setExpenseData([]);
-    }
-  };
+    }, [token, router, userEmail]);
 
-  const handleCreateExpense = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    const fetchProjects = async () => {
+        try {
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
+                method: "GET",
+            });
 
-    if (!expenseAmount || !expenseDescription || !expenseCategory || !date) {
-      setError("Please fill in all expense fields.");
-      return;
-    }
+            if (!userIdResponse.ok) {
+                const errorData = await userIdResponse.json();
+                const errorMessage = errorData?.message || "Failed to fetch user ID";
+                console.error("Failed to fetch user ID:", errorMessage);
+                setError(errorMessage);
+                return;
+            }
 
-    if (!selectedProject) {
-      setError("Please select a project to add the expense to.");
-      return;
-    }
+            const userIdData = await userIdResponse.json();
+            const userId = userIdData.userid;
 
-    try {
-      const response = await fetch(`${apiBaseUrl}/api/finance`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          project_id: selectedProject.id,
-          type: "expense",
-          amount: parseFloat(expenseAmount.toString()),
-          description: expenseDescription,
-          category: expenseCategory,
-          date: date ? format(date, 'yyyy-MM-dd') : null,
-        }),
-      });
+            const response = await fetch(`${apiBaseUrl}/api/projects?user_id=${userId}`, {
+                method: "GET",
+            });
 
-      const newExpense = await response.json();
+            if (!response.ok) {
+                const errorData = await response.json();
+                const errorMessage = errorData?.detail || errorData?.message || "Failed to fetch projects";
+                console.error("Failed to fetch projects:", errorMessage);
+                setError(errorMessage);
+                return;
+            }
 
-      if (response.ok) {
-        setExpenseAmount("");
-        setExpenseDescription("");
-        setExpenseCategory("");
-        setDate(new Date());
-        setExpenseOpen(false);
-        toast({
-          title: "Expense created successfully!",
-          description: `Expense ${expenseDescription} has been created.`,
-        });
-          fetchExpenseData();
-      } else {
-        setError(newExpense.message || "Failed to create expense");
-      }
-    } catch (err) {
-      setError("An error occurred while creating the expense.");
-      console.error(err);
-    }
-  };
+            const projectsData = await response.json();
+            setProjects(projectsData);
+        } catch (err) {
+            setError("An error occurred while fetching projects.");
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedProject) {
+            fetchExpenseData();
+        }
+    }, [selectedProject]);
+
+    const handleCreateProject = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        if (!projectName.trim()) {
+            setError("Project name cannot be empty");
+            return;
+        }
+
+        try {
+            const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
+                method: "GET",
+            });
+
+            if (!userIdResponse.ok) {
+                const errorData = await userIdResponse.json();
+                const errorMessage = errorData?.message || "Failed to fetch user ID";
+                console.error("Failed to fetch user ID:", errorMessage);
+                setError(errorMessage);
+                return;
+            }
+
+            const userIdData = await userIdResponse.json();
+            const userId = userIdData.userid;
+            const startDate = new Date().toISOString().split('T')[0];
+
+            const response = await fetch(`${apiBaseUrl}/api/projects`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: projectName,
+                    start_date: startDate,
+                    end_date: startDate,
+                    user_id: userId,
+                }),
+            });
+
+            const newProject = await response.json();
+
+            if (response.ok) {
+                setProjects([...projects, newProject]);
+                setProjectName("");
+                setOpen(false);
+                toast({
+                    title: "Project created successfully!",
+                    description: `Project ${projectName} has been created.`,
+                });
+                fetchProjects();
+            } else {
+                setError(newProject.message || "Failed to create project");
+            }
+        } catch (err) {
+            setError("An error occurred while creating the project.");
+            console.error(err);
+        }
+    };
+
+    const handleLogout = () => {
+        logout();
+        router.push('/login');
+    };
+
+    const fetchExpenseData = async () => {
+        if (selectedProject && selectedProject.id) {
+            try {
+                const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${selectedProject.id}`, {
+                    method: "GET",
+                });
+
+                if (expenseResponse.ok) {
+                    const expenseData = await expenseResponse.json();
+
+                    // Sort expenses by date in descending order by default
+                    const sortedData = [...expenseData].sort((a, b) => {
+                        return new Date(b.date).getTime() - new Date(a.date).getTime();
+                    });
+                    setExpenseData(sortedData);
+                } else {
+                    console.error("Failed to fetch expense data");
+                    setExpenseData([]);
+                }
+            } catch (err) {
+                console.error("An error occurred while fetching expense data:", err);
+                setExpenseData([]);
+            }
+        } else {
+            setExpenseData([]);
+        }
+    };
+
+    const handleCreateExpense = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        if (!expenseAmount || !expenseDescription || !expenseCategory || !date) {
+            setError("Please fill in all expense fields.");
+            return;
+        }
+
+        if (!selectedProject) {
+            setError("Please select a project to add the expense to.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${apiBaseUrl}/api/finance`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    project_id: selectedProject.id,
+                    type: "expense",
+                    amount: parseFloat(expenseAmount.toString()),
+                    description: expenseDescription,
+                    category: expenseCategory,
+                    date: date ? format(date, 'yyyy-MM-dd') : null,
+                }),
+            });
+
+            const newExpense = await response.json();
+
+            if (response.ok) {
+                setExpenseAmount("");
+                setExpenseDescription("");
+                setExpenseCategory("");
+                setDate(new Date());
+                setExpenseOpen(false);
+                toast({
+                    title: "Expense created successfully!",
+                    description: `Expense ${expenseDescription} has been created.`,
+                });
+                fetchExpenseData();
+            } else {
+                setError(newExpense.message || "Failed to create expense");
+            }
+        } catch (err) {
+            setError("An error occurred while creating the expense.");
+            console.error(err);
+        }
+    };
 
     const handleDateSelect = (date: Date | undefined) => {
         setDate(date);
@@ -256,6 +256,23 @@ export default function Projects() {
 
         return expenseData.filter(expense => expense.category === filterCategory);
     }, [expenseData, filterCategory]);
+
+    const sortExpensesByAmount = () => {
+        const newDirection = sortingDirection === 'asc' ? 'desc' : 'asc';
+        setSortingDirection(newDirection);
+
+        const sortedData = [...expenseData].sort((a, b) => {
+            const amountA = a.amount;
+            const amountB = b.amount;
+
+            if (newDirection === 'asc') {
+                return amountA - amountB;
+            } else {
+                return amountB - amountA;
+            }
+        });
+        setExpenseData(sortedData);
+    };
 
 
     return (
@@ -454,7 +471,15 @@ export default function Projects() {
                                                         </SelectContent>
                                                     </Select>
                                                 </TableHead>
-                                                <TableHead>Amount</TableHead>
+                                                <TableHead>
+                                                    <Button variant="ghost" size="sm" onClick={sortExpensesByAmount}>
+                                                        Amount
+                                                        {sortingDirection && (
+                                                            sortingDirection === 'asc' ? <ChevronsUpDown  className="w-4 h-4 ml-2"/> :
+                                                                <ChevronsUpDown className="w-4 h-4 ml-2"/>
+                                                        )}
+                                                    </Button>
+                                                </TableHead>
                                                 <TableHead>Description</TableHead>
                                             </TableRow>
                                         </TableHeader>
