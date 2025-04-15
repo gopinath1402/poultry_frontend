@@ -427,21 +427,7 @@ export default function Projects() {
                                                                 onChange={(e) => setExpenseDescription(e.target.value)}
                                                             />
                                                         </div>
-                                                        <div>
-                                                            <Select onValueChange={setFilterCategory} defaultValue="all">
-                                                                <SelectTrigger className="w-[180px]">
-                                                                    <SelectValue placeholder="Filter by Category" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <ScrollArea className="h-[200px] w-[200px] rounded-md border">
-                                                                        <SelectItem value="all">All Categories</SelectItem>
-                                                                        {expenseCategories.map((category) => (
-                                                                            <SelectItem key={category} value={category}>{category}</SelectItem>
-                                                                        ))}
-                                                                    </ScrollArea>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
+
                                                         <div>
                                                             <Label>Expense Date</Label>
                                                             <Popover>
@@ -476,7 +462,22 @@ export default function Projects() {
                                         <TableHeader>
                                             <TableRow>
                                                 <TableHead>Date</TableHead>
-                                                <TableHead>Category</TableHead>
+                                                <TableHead>
+                                                    Category
+                                                    <Select onValueChange={setFilterCategory} defaultValue="all">
+                                                        <SelectTrigger className="w-[180px]">
+                                                            <SelectValue placeholder="Filter by Category" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <ScrollArea className="h-[200px] w-[200px] rounded-md border">
+                                                                <SelectItem value="all">All Categories</SelectItem>
+                                                                {expenseCategories.map((category) => (
+                                                                    <SelectItem key={category} value={category}>{category}</SelectItem>
+                                                                ))}
+                                                            </ScrollArea>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </TableHead>
                                                 <TableHead>
                                                     <Button variant="ghost" size="sm" onClick={sortExpensesByAmount}>
                                                         Amount
@@ -558,4 +559,3 @@ export default function Projects() {
         </div>
     );
 }
-
