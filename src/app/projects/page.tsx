@@ -427,9 +427,15 @@ export default function Projects() {
                                                                 onChange={(e) => setExpenseDescription(e.target.value)}
                                                             />
                                                         </div>
-
                                                         <div>
-                                                            <Label>Expense Date</Label>
+                                                            <Input
+                                                                type="text"
+                                                                placeholder="Category"
+                                                                value={expenseDescription}
+                                                                onChange={(e) => setExpenseDescription(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div>            
                                                             <Popover>
                                                                 <PopoverTrigger asChild>
                                                                     <Button
@@ -463,14 +469,13 @@ export default function Projects() {
                                             <TableRow>
                                                 <TableHead>Date</TableHead>
                                                 <TableHead>
-                                                    Category
                                                     <Select onValueChange={setFilterCategory} defaultValue="all">
                                                         <SelectTrigger className="w-[180px]">
                                                             <SelectValue placeholder="Filter by Category" />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             <ScrollArea className="h-[200px] w-[200px] rounded-md border">
-                                                                <SelectItem value="all">All Categories</SelectItem>
+                                                                <SelectItem value="all">Category</SelectItem>
                                                                 {expenseCategories.map((category) => (
                                                                     <SelectItem key={category} value={category}>{category}</SelectItem>
                                                                 ))}
