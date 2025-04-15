@@ -39,7 +39,8 @@ const ExpensesPage: React.FC<ExpensesPageProps> = ({ selectedProject }) => {
     const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [expenseData, setExpenseData] = useState<any[]>([]);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-      const [sortingDirection, setSortingDirection] = useState<'asc' | 'desc' | null>(null);
+    const [sortingDirection, setSortingDirection] = useState<'asc' | 'desc' | null>(null);
+    const [filterCategory, setFilterCategory] = useState<string | null>(null);
 
 
     useEffect(() => {
@@ -47,7 +48,8 @@ const ExpensesPage: React.FC<ExpensesPageProps> = ({ selectedProject }) => {
             fetchExpenseData();
         }
     }, [selectedProject]);
-       const sortExpensesByAmount = () => {
+
+    const sortExpensesByAmount = () => {
         if (!expenseData || expenseData.length === 0) {
             return;
         }
@@ -97,9 +99,15 @@ const ExpensesPage: React.FC<ExpensesPageProps> = ({ selectedProject }) => {
         }
     };
 
-      const filteredExpenseData = useMemo(() => {
-        return expenseData;
-    }, [expenseData]);
+    const filteredExpenseData = useMemo(() => {
+        let filteredData = expenseData;
+
+        if (filterCategory && filterCategory !== "all") {
+            filteredData = filteredData.filter(expense => expense.category === filterCategory);
+        }
+
+        return filteredData;
+    }, [expenseData, filterCategory]);
 
     const handleCreateExpense = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -240,6 +248,19 @@ const ExpensesPage: React.FC<ExpensesPageProps> = ({ selectedProject }) => {
                     </Card>
                 </DialogContent>
             </Dialog>
+              <Select onValueChange={setFilterCategory} defaultValue="all">
+                  <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Filter by Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      <ScrollArea className="h-[200px] w-[200px] rounded-md border">
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {expenseCategories.map((category) => (
+                          <SelectItem key={category} value={category}>{category}</SelectItem>
+                      ))}
+                      </ScrollArea>
+                  </SelectContent>
+              </Select>
               <Table>
                   <TableHeader>
                       <TableRow>
