@@ -45,7 +45,7 @@ export default function Projects() {
   const [expenseCategory, setExpenseCategory] = useState("");
   const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [expenseData, setExpenseData] = useState<any[]>([]);
-    const [sortingDirection, setSortingDirection] = useState<'asc' | 'desc' | null>(null);
+    const [sortingDirection, setSortingDirection] = useState<'asc' | 'desc' | null>('desc');
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -173,7 +173,12 @@ export default function Projects() {
 
         if (expenseResponse.ok) {
           const expenseData = await expenseResponse.json();
-          setExpenseData(expenseData);
+
+          // Sort expenses by date in descending order by default
+          const sortedData = [...expenseData].sort((a, b) => {
+              return new Date(b.date).getTime() - new Date(a.date).getTime();
+          });
+          setExpenseData(sortedData);
         } else {
           console.error("Failed to fetch expense data");
           setExpenseData([]);
@@ -229,16 +234,7 @@ export default function Projects() {
           title: "Expense created successfully!",
           description: `Expense ${expenseDescription} has been created.`,
         });
-        const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${selectedProject.id}`, {
-          method: "GET",
-        });
-        if (expenseResponse.ok) {
-          const expenseData = await expenseResponse.json();
-          setExpenseData(expenseData);
-        } else {
-          console.error("Failed to fetch expense data");
-          setExpenseData([]);
-        }
+          fetchExpenseData();
       } else {
         setError(newExpense.message || "Failed to create expense");
       }
@@ -248,33 +244,10 @@ export default function Projects() {
     }
   };
 
-    const sortExpensesByAmount = () => {
-        if (!expenseData || expenseData.length === 0) {
-            return;
-        }
-
-        const newDirection = sortingDirection === 'asc' ? 'desc' : 'asc';
-        setSortingDirection(newDirection);
-
-        const sortedData = [...expenseData].sort((a, b) => {
-            const amountA = parseFloat(a.amount);
-            const amountB = parseFloat(b.amount);
-
-            if (newDirection === 'asc') {
-                return amountA - amountB;
-            } else {
-                return amountB - amountA;
-            }
-        });
-
-        setExpenseData(sortedData);
-    };
-
     const handleDateSelect = (date: Date | undefined) => {
         setDate(date);
         setIsCalendarOpen(false);
     };
-
 
     const filteredExpenseData = useMemo(() => {
         if (filterCategory === null || filterCategory === 'all') {
@@ -481,15 +454,7 @@ export default function Projects() {
                                                         </SelectContent>
                                                     </Select>
                                                 </TableHead>
-                                                <TableHead>
-                                                    <Button variant="ghost" size="sm" onClick={sortExpensesByAmount}>
-                                                        Amount
-                                                        {sortingDirection && (
-                                                            sortingDirection === 'asc' ? <ChevronsUpDown className="w-4 h-4 ml-2" /> :
-                                                                <ChevronsUpDown className="w-4 h-4 ml-2" />
-                                                        )}
-                                                    </Button>
-                                                </TableHead>
+                                                <TableHead>Amount</TableHead>
                                                 <TableHead>Description</TableHead>
                                             </TableRow>
                                         </TableHeader>
