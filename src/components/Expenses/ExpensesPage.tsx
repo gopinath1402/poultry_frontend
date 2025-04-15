@@ -294,3 +294,4 @@ const ExpensesPage: React.FC<ExpensesPageProps> = ({ selectedProject }) => {
 };
 
 export default ExpensesPage;
+
