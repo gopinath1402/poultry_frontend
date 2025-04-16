@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
-import { Plus, Settings, LogOut, ChevronsUpDown } from "lucide-react";
+import { Plus, Settings, LogOut } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -274,6 +274,12 @@ export default function Projects() {
         setExpenseData(sortedData);
     };
 
+        const filteredProjects = useMemo(() => {
+        return projects.filter(project =>
+            project.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [projects, searchQuery]);
+
 
     return (
         <div className="h-screen flex bg-whatsapp-background">
@@ -343,7 +349,7 @@ export default function Projects() {
                 {/* Project List */}
                 <ScrollArea className="flex-1">
                     <div className="py-2">
-                        {projects.map((project) => (
+                        {filteredProjects.map((project) => (
                             <Button
                                 key={project.id}
                                 variant="ghost"
@@ -472,20 +478,12 @@ export default function Projects() {
                                                         </SelectContent>
                                                     </Select>
                                                 </TableHead>
-                                                <TableHead>
-                                                    <Button variant="ghost" size="sm" onClick={sortExpensesByAmount}>
-                                                        Amount
-                                                        {sortingDirection && (
-                                                            sortingDirection === 'asc' ? <ChevronsUpDown  className="w-4 h-4 ml-2"/> :
-                                                                <ChevronsUpDown className="w-4 h-4 ml-2"/>
-                                                        )}
-                                                    </Button>
-                                                </TableHead>
+                                                <TableHead>Amount</TableHead>
                                                 <TableHead>Description</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {filteredExpenseData.map((expense) => (
+                                            {expenseData.map((expense) => (
                                                 <TableRow key={expense.id}>
                                                     <TableCell>{expense.date}</TableCell>
                                                     <TableCell>{expense.category}</TableCell>
