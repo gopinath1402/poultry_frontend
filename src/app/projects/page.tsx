@@ -27,6 +27,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
+import IncomePage from "@/app/projects/income/page";
 
 const expenseCategories = ['egg', 'feed', 'medicine', 'electricity', 'labor', 'other', 'equipment', 'chicks', 'insurance', 'transport'];
 
@@ -512,7 +513,7 @@ export default function Projects() {
                                     </ScrollArea>
                                 </TabsContent>
                                 <TabsContent value="income">
-                                    <p className="text-whatsapp-text">Income content for project {selectedProject.name}</p>
+                                        <IncomePage selectedProject={selectedProject} />
                                 </TabsContent>
                                 <TabsContent value="productivity">
                                     <p className="text-whatsapp-text">Productivity content for project {selectedProject.name}</p>
