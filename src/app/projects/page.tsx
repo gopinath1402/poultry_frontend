@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
-import { Plus, Settings, LogOut } from "lucide-react";
+import { Plus, Settings, LogOut, ChevronsUpDown } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -52,9 +52,10 @@ export default function Projects() {
     useEffect(() => {
         if (token && userEmail) {
             fetchProjects();
-        } else {
-            router.push('/login');
         }
+        // } else {
+        //     // router.push('/login');
+        // }
     }, [token, router, userEmail]);
 
     const fetchProjects = async () => {
@@ -283,9 +284,9 @@ export default function Projects() {
 
     return (
         <div className="h-screen flex bg-whatsapp-background">
-            {/* Sidebar */}
+            {/* Sidebar */}  
             <aside
-                className="w-80 border-r border-whatsapp-border flex flex-col bg-whatsapp-panel"
+                className="w-60 border-r border-whatsapp-border flex flex-col bg-whatsapp-panel"
             >
                 {/* Profile and Settings */}
                 <div className="p-4 flex items-center justify-between border-b border-whatsapp-border">
@@ -375,7 +376,8 @@ export default function Projects() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-4">
+            <ScrollArea>
+            <main className="flex-1 p-4 overflow-auto w-[670px]">            
                 {selectedProject ? (
                     <Card className="h-full bg-whatsapp-panel">
                         <CardHeader>
@@ -468,10 +470,10 @@ export default function Projects() {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead>Date</TableHead>
+                                                <TableHead className="w-[120px]">Date</TableHead>
                                                 <TableHead>
                                                     <Select onValueChange={setFilterCategory} defaultValue="all">
-                                                        <SelectTrigger className="w-[180px]">
+                                                        <SelectTrigger className="w-[100px]">
                                                             <SelectValue placeholder="Filter by Category" />
                                                         </SelectTrigger>
                                                         <SelectContent>
@@ -484,16 +486,24 @@ export default function Projects() {
                                                         </SelectContent>
                                                     </Select>
                                                 </TableHead>
-                                                <TableHead>Amount</TableHead>
+                                                <TableHead className="w-[60px]">
+                                                     <Button variant="ghost" size="sm" onClick={sortExpensesByAmount}>
+                                                         Amount
+                                                         {sortingDirection && (
+                                                             sortingDirection === 'asc' ? <ChevronsUpDown  className="w-4 h-4 ml-2"/> :
+                                                                 <ChevronsUpDown className="w-4 h-4 ml-2"/>
+                                                         )}
+                                                     </Button>
+                                                 </TableHead>
                                                 <TableHead>Description</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
                                             {expenseData.map((expense) => (
                                                 <TableRow key={expense.id}>
-                                                    <TableCell>{expense.date}</TableCell>
-                                                    <TableCell>{expense.category}</TableCell>
-                                                    <TableCell>{expense.amount}</TableCell>
+                                                    <TableCell className="w-[120px]">{expense.date}</TableCell>
+                                                    <TableCell className="w-[60px]">{expense.category}</TableCell>
+                                                    <TableCell className="w-[60px]">{expense.amount}</TableCell>
                                                     <TableCell>{expense.description}</TableCell>
                                                 </TableRow>
                                             ))}
@@ -517,8 +527,9 @@ export default function Projects() {
                     <div className="h-full flex items-center justify-center text-whatsapp-secondary">
                         Select a project to view details.
                     </div>
-                )}
+                )}            
             </main>
+            </ScrollArea>
         </div>
     );
 }
