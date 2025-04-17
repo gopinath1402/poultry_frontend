@@ -47,6 +47,8 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
     const [sortingDirection, setSortingDirection] = useState<'asc' | 'desc' | null>('desc');
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
 
     useEffect(() => {
         if (selectedProject) {
@@ -84,18 +86,17 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
 
     const handleCreateIncome = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSubmitting) return; // prevent double submits
         setError("");
-
         if (!incomeAmount || !incomeDescription || !incomeCategory || !date) {
             setError("Please fill in all income fields.");
             return;
         }
-
         if (!selectedProject) {
             setError("Please select a project to add the income to.");
             return;
         }
-
+        setIsSubmitting(true); // disable the button
         try {
             const response = await fetch(`${apiBaseUrl}/api/finance`, {
                 method: "POST",
@@ -126,11 +127,14 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
                 });
                 fetchIncomeData();
             } else {
+            const newIncome = await response.json();
                 setError(newIncome.message || "Failed to create income");
             }
         } catch (err) {
             setError("An error occurred while creating the income.");
             console.error(err);
+        }finally {
+            setIsSubmitting(false); // allow future submits
         }
     };
 
@@ -235,7 +239,15 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
                                         </PopoverContent>
                                     </Popover>
                                 </div>
-                                <Button type="submit">Create Income</Button>
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={`px-4 py-2 rounded text-white ${
+                                        isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#008080] hover:bg-[#006666]"
+                                    }`}
+                                >
+                                    {isSubmitting ? "Processing..." : "Create Income"}
+                                </Button>
                             </form>
                         </CardContent>
                     </Card>

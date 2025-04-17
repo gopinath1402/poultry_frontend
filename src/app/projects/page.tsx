@@ -49,6 +49,7 @@ export default function Projects() {
     const [sortingDirection, setSortingDirection] = useState<'asc' | 'desc' | null>('desc');
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (token && userEmail) {
@@ -104,13 +105,14 @@ export default function Projects() {
 
     const handleCreateProject = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSubmitting) return;
         setError("");
 
         if (!projectName.trim()) {
             setError("Project name cannot be empty");
             return;
         }
-
+        setIsSubmitting(true);
         try {
             const userIdResponse = await fetch(`${apiBaseUrl}/api/auth/userid?email=${userEmail}`, {
                 method: "GET",
@@ -158,6 +160,8 @@ export default function Projects() {
         } catch (err) {
             setError("An error occurred while creating the project.");
             console.error(err);
+        }finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -196,6 +200,7 @@ export default function Projects() {
 
     const handleCreateExpense = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSubmitting) return;
         setError("");
 
         if (!expenseAmount || !expenseDescription || !expenseCategory || !date) {
@@ -208,6 +213,7 @@ export default function Projects() {
             return;
         }
 
+        setIsSubmitting(true);
         try {
             const response = await fetch(`${apiBaseUrl}/api/finance`, {
                 method: "POST",
@@ -243,6 +249,8 @@ export default function Projects() {
         } catch (err) {
             setError("An error occurred while creating the expense.");
             console.error(err);
+        }finally {
+            setIsSubmitting(false); // allow future submits
         }
     };
 
@@ -334,7 +342,15 @@ export default function Projects() {
                                                     onChange={(e) => setProjectName(e.target.value)}
                                                 />
                                             </div>
-                                            <Button type="submit">Create Project</Button>
+                                            <Button
+                                                type="submit"
+                                                disabled={isSubmitting}
+                                                className={`px-4 py-2 rounded text-white ${
+                                                    isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#008080] hover:bg-[#006666]"
+                                                }`}
+                                            >
+                                                {isSubmitting ? "Processing..." : "Create Project"}
+                                            </Button>
                                         </form>
                                     </CardContent>
                                 </Card>
@@ -461,7 +477,15 @@ export default function Projects() {
                                                                 </PopoverContent>
                                                             </Popover>
                                                         </div>
-                                                        <Button type="submit">Create Expense</Button>
+                                                        <Button
+                                                            type="submit"
+                                                            disabled={isSubmitting}
+                                                            className={`px-4 py-2 rounded text-white ${
+                                                                isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#008080] hover:bg-[#006666]"
+                                                            }`}
+                                                        >
+                                                            {isSubmitting ? "Processing..." : "Create Expense"}
+                                                        </Button>
                                                     </form>
                                                 </CardContent>
                                             </Card>
