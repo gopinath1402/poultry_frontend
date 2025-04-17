@@ -295,7 +295,7 @@ export default function Projects() {
         <div className="h-screen flex bg-whatsapp-background">
             {/* Sidebar */}  
             <aside
-                className="w-60 border-r border-whatsapp-border flex flex-col bg-whatsapp-panel"
+                className="w-80 border-r border-whatsapp-border flex flex-col bg-whatsapp-panel"
             >
                 {/* Profile and Settings */}
                 <div className="p-4 flex items-center justify-between border-b border-whatsapp-border">
@@ -394,7 +394,7 @@ export default function Projects() {
 
             {/* Main Content */}
             <ScrollArea>
-            <main className="flex-1 p-4 overflow-auto w-[670px]">            
+            <main className="flex-1 p-4 overflow-auto">            
                 {selectedProject ? (
                     <Card className="h-full bg-whatsapp-panel">
                         <CardHeader>
@@ -498,7 +498,7 @@ export default function Projects() {
                                                 <TableHead className="w-[120px]">Date</TableHead>
                                                 <TableHead>
                                                     <Select onValueChange={setFilterCategory} defaultValue="all">
-                                                        <SelectTrigger className="w-[100px]">
+                                                        <SelectTrigger className="w-[100px] border-none">
                                                             <SelectValue placeholder="Filter by Category" />
                                                         </SelectTrigger>
                                                         <SelectContent>

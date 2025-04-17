@@ -260,7 +260,7 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
                             <TableHead className="w-[120px]">Date</TableHead>
                             <TableHead>
                                 <Select onValueChange={setFilterCategory} defaultValue="all">
-                                    <SelectTrigger className="w-[100px]">
+                                    <SelectTrigger className="w-[100px] border-none">
                                         <SelectValue placeholder="Filter by Category" />
                                     </SelectTrigger>
                                     <SelectContent>
