@@ -28,6 +28,8 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import IncomePage from "@/app/projects/income/page";
+import ExpensesPage from "@/app/projects/expenses/page";
+import { AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const expenseCategories = ['egg', 'feed', 'medicine', 'electricity', 'labor', 'other', 'equipment', 'chicks', 'insurance', 'transport'];
 
@@ -97,12 +99,6 @@ export default function Projects() {
         }
     };
 
-    useEffect(() => {
-        if (selectedProject) {
-            fetchExpenseData();
-        }
-    }, [selectedProject]);
-
     const handleCreateProject = async (e: React.FormEvent) => {
         e.preventDefault();
         if (isSubmitting) return;
@@ -170,120 +166,6 @@ export default function Projects() {
         router.push('/login');
     };
 
-    const fetchExpenseData = async () => {
-        if (selectedProject && selectedProject.id) {
-            try {
-                const expenseResponse = await fetch(`${apiBaseUrl}/api/finance/expense/${selectedProject.id}`, {
-                    method: "GET",
-                });
-
-                if (expenseResponse.ok) {
-                    const expenseData = await expenseResponse.json();
-
-                    // Sort expenses by date in descending order by default
-                    const sortedData = [...expenseData].sort((a, b) => {
-                        return new Date(b.date).getTime() - new Date(a.date).getTime();
-                    });
-                    setExpenseData(sortedData);
-                } else {
-                    console.error("Failed to fetch expense data");
-                    setExpenseData([]);
-                }
-            } catch (err) {
-                console.error("An error occurred while fetching expense data:", err);
-                setExpenseData([]);
-            }
-        } else {
-            setExpenseData([]);
-        }
-    };
-
-    const handleCreateExpense = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (isSubmitting) return;
-        setError("");
-
-        if (!expenseAmount || !expenseDescription || !expenseCategory || !date) {
-            setError("Please fill in all expense fields.");
-            return;
-        }
-
-        if (!selectedProject) {
-            setError("Please select a project to add the expense to.");
-            return;
-        }
-
-        setIsSubmitting(true);
-        try {
-            const response = await fetch(`${apiBaseUrl}/api/finance`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    project_id: selectedProject.id,
-                    type: "expense",
-                    amount: parseFloat(expenseAmount.toString()),
-                    description: expenseDescription,
-                    category: expenseCategory,
-                    date: date ? format(date, 'yyyy-MM-dd') : null,
-                }),
-            });
-
-            const newExpense = await response.json();
-
-            if (response.ok) {
-                setExpenseAmount("");
-                setExpenseDescription("");
-                setExpenseCategory("");
-                setDate(new Date());
-                setExpenseOpen(false);
-                toast({
-                    title: "Expense created successfully!",
-                    description: `Expense ${expenseDescription} has been created.`,
-                });
-                fetchExpenseData();
-            } else {
-                setError(newExpense.message || "Failed to create expense");
-            }
-        } catch (err) {
-            setError("An error occurred while creating the expense.");
-            console.error(err);
-        }finally {
-            setIsSubmitting(false); // allow future submits
-        }
-    };
-
-    const handleDateSelect = (date: Date | undefined) => {
-        setDate(date);
-        setIsCalendarOpen(false);
-    };
-
-    const filteredExpenseData = useMemo(() => {
-        if (filterCategory === null || filterCategory === 'all') {
-            return expenseData;
-        }
-
-        return expenseData.filter(expense => expense.category === filterCategory);
-    }, [expenseData, filterCategory]);
-
-    const sortExpensesByAmount = () => {
-        const newDirection = sortingDirection === 'asc' ? 'desc' : 'asc';
-        setSortingDirection(newDirection);
-
-        const sortedData = [...expenseData].sort((a, b) => {
-            const amountA = a.amount;
-            const amountB = b.amount;
-
-            if (newDirection === 'asc') {
-                return amountA - amountB;
-            } else {
-                return amountB - amountA;
-            }
-        });
-        setExpenseData(sortedData);
-    };
-
         const filteredProjects = useMemo(() => {
         return projects.filter(project =>
             project.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -311,10 +193,7 @@ export default function Projects() {
                             <LogOut className="h-5 w-5 text-whatsapp-secondary" />
                         </Button>
                         <Dialog open={open} onOpenChange={setOpen}>
-                            <DialogTrigger asChild>
-                                {/* <Button variant="ghost" size="icon">
-                                    <Settings className="h-5 w-5 text-whatsapp-secondary" />
-                                </Button> */}
+                            <DialogTrigger asChild> 
                                 <Button
                                     className="rounded-full w-5 h-5 flex items-center justify-center shadow-lg"
                                     style={{ backgroundColor: '#008080', color: 'white' }}
@@ -322,15 +201,17 @@ export default function Projects() {
                                     <Plus className="h-3 w-3" />
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
+                            <DialogContent className="sm:max-w-[425px] text-whatsapp-text">
                                 <DialogHeader>
-                                    <DialogTitle>Create New Project</DialogTitle>
+                                    <DialogTitle>
+                                        <span style={{ color: '#008080' }}>Create New Project</span>
+                                    </DialogTitle>
                                     <DialogDescription>
                                         Create a new project to manage your expenses, income, and
                                         productivity.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <Card className="w-full md:w-auto bg-whatsapp-panel">
+                                <Card className="w-full md:w-auto bg-whatsapp-panel border-none">
                                     <CardContent>
                                         {error && <div className="text-red-500">{error}</div>}
                                         <form onSubmit={handleCreateProject} className="space-y-2">
@@ -409,132 +290,7 @@ export default function Projects() {
                                     <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="expenses">
-                                    <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
-                                        <DialogTrigger asChild>
-                                            <Button>Add Expense</Button>
-                                        </DialogTrigger>
-                                        <DialogContent className="sm:max-w-[425px] bg-whatsapp-panel text-whatsapp-text">
-                                            <DialogHeader>
-                                                <DialogTitle>Add a new expense to this project.</DialogTitle>
-                                                <DialogDescription>
-                                                    <span style={{ color: '#008080' }}>Add a new expense to this project.</span>
-                                                </DialogDescription>
-                                            </DialogHeader>
-                                            <Card className="w-full md:w-auto bg-whatsapp-panel">
-                                                <CardContent>
-                                                    {error && <div className="text-red-500">{error}</div>}
-                                                    <form onSubmit={handleCreateExpense} className="space-y-2">
-                                                        <div>
-                                                            <Input
-                                                                type="number"
-                                                                placeholder="Expense Amount"
-                                                                value={expenseAmount.toString()}
-                                                                onChange={(e) => setExpenseAmount(e.target.value)}
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <Input
-                                                                type="text"
-                                                                placeholder="Expense Description"
-                                                                value={expenseDescription}
-                                                                onChange={(e) => setExpenseDescription(e.target.value)}
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <Select onValueChange={setExpenseCategory}>
-                                                                <SelectTrigger className="w-[180px]">
-                                                                    <SelectValue placeholder="Select a category" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <ScrollArea className="h-[200px] w-[200px] rounded-md border">
-                                                                        {expenseCategories.map((category) => (
-                                                                            <SelectItem key={category} value={category}>{category}</SelectItem>
-                                                                        ))}
-                                                                    </ScrollArea>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                        <div>
-                                                            <Popover>
-                                                                <PopoverTrigger asChild>
-                                                                    <Button
-                                                                        variant={"outline"}
-                                                                        className={cn(
-                                                                            "w-[240px] justify-start text-left font-normal",
-                                                                            !date && "text-muted-foreground"
-                                                                        )}
-                                                                    >
-                                                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                                                    </Button>
-                                                                </PopoverTrigger>
-                                                                <PopoverContent className="w-auto p-0" align="start">
-                                                                    <Calendar
-                                                                        mode="single"
-                                                                        selected={date}
-                                                                        onSelect={handleDateSelect}
-                                                                        className={cn("rounded-md border")}
-                                                                    />
-                                                                </PopoverContent>
-                                                            </Popover>
-                                                        </div>
-                                                        <Button
-                                                            type="submit"
-                                                            disabled={isSubmitting}
-                                                            className={`px-4 py-2 rounded text-white ${
-                                                                isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#008080] hover:bg-[#006666]"
-                                                            }`}
-                                                        >
-                                                            {isSubmitting ? "Processing..." : "Create Expense"}
-                                                        </Button>
-                                                    </form>
-                                                </CardContent>
-                                            </Card>
-                                        </DialogContent>
-                                    </Dialog>
-                                    <ScrollArea>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead className="w-[120px]">Date</TableHead>
-                                                <TableHead>
-                                                    <Select onValueChange={setFilterCategory} defaultValue="all">
-                                                        <SelectTrigger className="w-[100px] border-none">
-                                                            <SelectValue placeholder="Filter by Category" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <ScrollArea className="h-[200px] w-[200px] rounded-md border">
-                                                                <SelectItem value="all">Category</SelectItem>
-                                                                {expenseCategories.map((category) => (
-                                                                    <SelectItem key={category} value={category}>{category}</SelectItem>
-                                                                ))}
-                                                            </ScrollArea>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </TableHead>
-                                                <TableHead className="w-[60px]">
-                                                     <Button variant="ghost" size="sm" onClick={sortExpensesByAmount}>
-                                                         Amount
-                                                         {sortingDirection && (
-                                                             sortingDirection === 'asc' ? <ChevronsUpDown  className="w-4 h-4 ml-2"/> :
-                                                                 <ChevronsUpDown className="w-4 h-4 ml-2"/>
-                                                         )}
-                                                     </Button>
-                                                 </TableHead>
-                                                <TableHead>Description</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {expenseData.map((expense) => (
-                                                <TableRow key={expense.id}>
-                                                    <TableCell className="w-[120px]">{expense.date}</TableCell>
-                                                    <TableCell className="w-[60px]">{expense.category}</TableCell>
-                                                    <TableCell className="w-[60px]">{expense.amount}</TableCell>
-                                                    <TableCell>{expense.description}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                    </ScrollArea>
+                                    <ExpensesPage selectedProject={selectedProject} />
                                 </TabsContent>
                                 <TabsContent value="income">
                                         <IncomePage selectedProject={selectedProject} />
