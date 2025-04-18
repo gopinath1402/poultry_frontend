@@ -28,11 +28,11 @@ import { ChevronsUpDown } from "lucide-react";
 
 const incomeCategories = ['egg', 'feed', 'medicine', 'electricity', 'labor', 'other', 'equipment', 'chicks', 'insurance', 'transport'];
 
-interface IncomesPageProps {
+interface IncomePageProps {
     selectedProject: any;
 }
 
-export default function IncomePage({ selectedProject }: IncomesPageProps) {
+export default function IncomePage({ selectedProject }: IncomePageProps) {
     const [projectName, setProjectName] = useState("");
     const [projects, setProjects] = useState<any[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -48,6 +48,8 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [totalIncome, setTotalIncome] = useState(0);
+    const [categoryTotalIncome, setCategoryTotalIncome] = useState(0);
 
 
     useEffect(() => {
@@ -66,23 +68,50 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
                 if (incomeResponse.ok) {
                     const incomeData = await incomeResponse.json();
 
-                    // Sort incomes by date in descending order by default
+                    // Sort income by date in descending order by default
                     const sortedData = [...incomeData].sort((a, b) => {
                         return new Date(b.date).getTime() - new Date(a.date).getTime();
                     });
                     setIncomeData(sortedData);
+
+                    // Calculate total income
+                    const total = sortedData.reduce((acc, income) => acc + income.amount, 0);
+                    setTotalIncome(total);
+
                 } else {
                     console.error("Failed to fetch income data");
                     setIncomeData([]);
+                    setTotalIncome(0);
                 }
             } catch (err) {
                 console.error("An error occurred while fetching income data:", err);
                 setIncomeData([]);
+                setTotalIncome(0);
             }
         } else {
             setIncomeData([]);
+            setTotalIncome(0);
         }
     };
+
+    useEffect(() => {
+        calculateCategoryTotal();
+    }, [filterCategory, incomeData]);
+
+    const calculateCategoryTotal = () => {
+        if (filterCategory && filterCategory !== 'all') {
+            const categoryTotal = incomeData.reduce((acc, income) => {
+                if (income.category === filterCategory) {
+                    return acc + income.amount;
+                }
+                return acc;
+            }, 0);
+            setCategoryTotalIncome(categoryTotal);
+        } else {
+            setCategoryTotalIncome(0);
+        }
+    };
+
 
     const handleCreateIncome = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -151,7 +180,7 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
         return incomeData.filter(income => income.category === filterCategory);
     }, [incomeData, filterCategory]);
 
-    const sortIncomesByAmount = () => {
+    const sortIncomeByAmount = () => {
         const newDirection = sortingDirection === 'asc' ? 'desc' : 'asc';
         setSortingDirection(newDirection);
 
@@ -171,6 +200,16 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
 
     return (
         <CardContent>
+             <div>
+                <span className="text-lg font-semibold text-whatsapp-text">
+                    Total Incomes: {totalIncome}
+                </span>
+                {filterCategory && filterCategory !== 'all' && (
+                    <span className="text-lg font-semibold text-whatsapp-text ml-4">
+                        Total {filterCategory} Incomes: {categoryTotalIncome}
+                    </span>
+                )}
+            </div>
             <Dialog open={incomeOpen} onOpenChange={setIncomeOpen}>
                 <DialogTrigger asChild>
                     <Button>Add Income</Button>
@@ -273,7 +312,7 @@ export default function IncomePage({ selectedProject }: IncomesPageProps) {
                                 </Select>
                             </TableHead>
                             <TableHead className="w-[60px]">
-                                <Button variant="ghost" size="sm" onClick={sortIncomesByAmount}>
+                                <Button variant="ghost" size="sm" onClick={sortIncomeByAmount}>
                                     Amount
                                     {sortingDirection && (
                                         sortingDirection === 'asc' ? <ChevronsUpDown className="w-4 h-4 ml-2" /> :

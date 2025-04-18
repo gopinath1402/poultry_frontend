@@ -48,6 +48,8 @@ export default function ExpensePage({ selectedProject }: ExpensePageProps) {
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [totalExpense, setTotalExpense] = useState(0);
+    const [categoryTotalExpense, setCategoryTotalExpense] = useState(0);
 
 
     useEffect(() => {
@@ -71,18 +73,45 @@ export default function ExpensePage({ selectedProject }: ExpensePageProps) {
                         return new Date(b.date).getTime() - new Date(a.date).getTime();
                     });
                     setExpenseData(sortedData);
+
+                    // Calculate total expense
+                    const total = sortedData.reduce((acc, expense) => acc + expense.amount, 0);
+                    setTotalExpense(total);
+
                 } else {
                     console.error("Failed to fetch expense data");
                     setExpenseData([]);
+                    setTotalExpense(0);
                 }
             } catch (err) {
                 console.error("An error occurred while fetching expense data:", err);
                 setExpenseData([]);
+                setTotalExpense(0);
             }
         } else {
             setExpenseData([]);
+            setTotalExpense(0);
         }
     };
+
+    useEffect(() => {
+        calculateCategoryTotal();
+    }, [filterCategory, expenseData]);
+
+    const calculateCategoryTotal = () => {
+        if (filterCategory && filterCategory !== 'all') {
+            const categoryTotal = expenseData.reduce((acc, expense) => {
+                if (expense.category === filterCategory) {
+                    return acc + expense.amount;
+                }
+                return acc;
+            }, 0);
+            setCategoryTotalExpense(categoryTotal);
+        } else {
+            setCategoryTotalExpense(0);
+        }
+    };
+
 
     const handleCreateExpense = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -171,6 +200,16 @@ export default function ExpensePage({ selectedProject }: ExpensePageProps) {
 
     return (
         <CardContent>
+             <div>
+                <span className="text-lg font-semibold text-whatsapp-text">
+                    Total Expenses: {totalExpense}
+                </span>
+                {filterCategory && filterCategory !== 'all' && (
+                    <span className="text-lg font-semibold text-whatsapp-text ml-4">
+                        Total {filterCategory} Expenses: {categoryTotalExpense}
+                    </span>
+                )}
+            </div>
             <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
                 <DialogTrigger asChild>
                     <Button>Add Expense</Button>
