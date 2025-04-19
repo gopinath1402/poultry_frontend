@@ -219,7 +219,7 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
-                <CardContent className={`text-3xl font-bold ${totalExpense < 0 ? 'text-red-500' : 'text-gray-800'} dark:text-gray-200 animate-pulse`}>{totalExpense}</CardContent>
+                <CardContent className={`text-3xl font-bold ${totalExpense > 0 ? 'text-red-500' : 'text-gray-800'} dark:text-gray-200 animate-pulse`}>{totalExpense}</CardContent>
             </Card>
 
             <Card className="hover:shadow-md transition-shadow duration-300 ease-in-out bg-white dark:bg-gray-800 border-0 rounded-lg shadow-sm">
