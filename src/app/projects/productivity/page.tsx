@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { apiBaseUrl } from "@/services/api-config";
 import { useAuth } from "@/context/AuthContext";
+import { Plus } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -191,8 +192,11 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                     <CardTitle>Total Expense</CardTitle>
                     <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                                +
+                            <Button variant="ghost" size="sm"
+                            className="rounded-full w-5 h-5 flex items-center justify-center shadow-lg"
+                            style={{ backgroundColor: '#008080', color: 'white' }}
+                            >
+                                <Plus/>
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
@@ -225,8 +229,11 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                     <CardTitle>Total Income</CardTitle>
                     <Dialog open={incomeOpen} onOpenChange={setIncomeOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                                +
+                            <Button variant="ghost" size="sm"
+                            className="rounded-full w-5 h-5 flex items-center justify-center shadow-lg"
+                            style={{ backgroundColor: '#008080', color: 'white' }}
+                            >
+                                <Plus/>
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
@@ -259,8 +266,11 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                     <CardTitle>Egg Collection</CardTitle>
                     <Dialog open={eggOpen} onOpenChange={setEggOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                                +
+                            <Button variant="ghost" size="sm"
+                            className="rounded-full w-5 h-5 flex items-center justify-center shadow-lg"
+                            style={{ backgroundColor: '#008080', color: 'white' }}
+                            >
+                                <Plus/>
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
@@ -293,8 +303,11 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                     <CardTitle>Hens Count</CardTitle>
                     <Dialog open={hensOpen} onOpenChange={setHensOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                                +
+                            <Button variant="ghost" size="sm"
+                            className="rounded-full w-5 h-5 flex items-center justify-center shadow-lg"
+                            style={{ backgroundColor: '#008080', color: 'white' }}
+                            >
+                                <Plus/>
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
