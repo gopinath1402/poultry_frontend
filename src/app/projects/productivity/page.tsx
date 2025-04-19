@@ -187,9 +187,9 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
         <CardContent className="flex flex-col gap-4">
             {error && <div className="text-red-500">{error}</div>}
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow duration-300 ease-in-out bg-white dark:bg-gray-800 border-0 rounded-lg shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle>Total Expense</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">Total Expense</CardTitle>
                     <Dialog open={expenseOpen} onOpenChange={setExpenseOpen}>
                         <DialogTrigger asChild>
                             <Button variant="ghost" size="sm"
@@ -199,7 +199,7 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                                 <Plus/>
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                             <DialogHeader>
                                 <DialogTitle>Update Total Expense</DialogTitle>
                                 <DialogDescription>
@@ -219,14 +219,12 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
-                <CardContent>
-                    {totalExpense}
-                </CardContent>
+                <CardContent className="text-3xl font-bold text-gray-800 dark:text-gray-200 animate-pulse">{totalExpense}</CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow duration-300 ease-in-out bg-white dark:bg-gray-800 border-0 rounded-lg shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle>Total Income</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">Total Income</CardTitle>
                     <Dialog open={incomeOpen} onOpenChange={setIncomeOpen}>
                         <DialogTrigger asChild>
                             <Button variant="ghost" size="sm"
@@ -236,7 +234,7 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                                 <Plus/>
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                             <DialogHeader>
                                 <DialogTitle>Update Total Income</DialogTitle>
                                 <DialogDescription>
@@ -256,14 +254,12 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
-                <CardContent>
-                    {totalIncome}
-                </CardContent>
+                <CardContent className="text-3xl font-bold text-gray-800 dark:text-gray-200 animate-pulse">{totalIncome}</CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow duration-300 ease-in-out bg-white dark:bg-gray-800 border-0 rounded-lg shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle>Egg Collection</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">Egg Collection</CardTitle>
                     <Dialog open={eggOpen} onOpenChange={setEggOpen}>
                         <DialogTrigger asChild>
                             <Button variant="ghost" size="sm"
@@ -273,7 +269,7 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                                 <Plus/>
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                             <DialogHeader>
                                 <DialogTitle>Update Egg Collection</DialogTitle>
                                 <DialogDescription>
@@ -293,14 +289,12 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
-                <CardContent>
-                    {eggCollection}
-                </CardContent>
+                <CardContent className="text-3xl font-bold text-gray-800 dark:text-gray-200 animate-pulse">{eggCollection}</CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow duration-300 ease-in-out bg-white dark:bg-gray-800 border-0 rounded-lg shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle>Hens Count</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">Hens Count</CardTitle>
                     <Dialog open={hensOpen} onOpenChange={setHensOpen}>
                         <DialogTrigger asChild>
                             <Button variant="ghost" size="sm"
@@ -310,7 +304,7 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                                 <Plus/>
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                             <DialogHeader>
                                 <DialogTitle>Update Hens Count</DialogTitle>
                                 <DialogDescription>
@@ -330,9 +324,7 @@ export default function ProductivityPage({ selectedProject }: ProductivityPagePr
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
-                <CardContent>
-                    {hensCount}
-                </CardContent>
+                <CardContent className="text-3xl font-bold text-gray-800 dark:text-gray-200 animate-pulse">{hensCount}</CardContent>
             </Card>
         </CardContent>
     );
