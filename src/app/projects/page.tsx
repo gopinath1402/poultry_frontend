@@ -27,6 +27,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
+import ProductivityPage from "@/app/projects/productivity/page";
 import IncomePage from "@/app/projects/income/page";
 import ExpensesPage from "@/app/projects/expenses/page";
 import { AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -282,21 +283,21 @@ export default function Projects() {
                             <h2 className="text-lg font-semibold text-whatsapp-text">{selectedProject.name}</h2>
                         </CardHeader>
                         <CardContent>
-                            <Tabs defaultValue="expenses" className="w-full">
+                            <Tabs defaultValue="productivity" className="w-full">
                                 <TabsList>
+                                    <TabsTrigger value="productivity" className="text-whatsapp-secondary">Productivity</TabsTrigger>
                                     <TabsTrigger value="expenses" className="text-whatsapp-secondary">Expenses</TabsTrigger>
                                     <TabsTrigger value="income" className="text-whatsapp-secondary">Income</TabsTrigger>
-                                    <TabsTrigger value="productivity" className="text-whatsapp-secondary">Productivity</TabsTrigger>
                                     <TabsTrigger value="report" className="text-whatsapp-secondary">Report</TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="expenses">
                                     <ExpensesPage selectedProject={selectedProject} />
                                 </TabsContent>
                                 <TabsContent value="income">
-                                        <IncomePage selectedProject={selectedProject} />
+                                    <IncomePage selectedProject={selectedProject} />
                                 </TabsContent>
                                 <TabsContent value="productivity">
-                                    <p className="text-whatsapp-text">Productivity content for project {selectedProject.name}</p>
+                                    <ProductivityPage selectedProject={selectedProject} />
                                 </TabsContent>
                                 <TabsContent value="report">
                                     <p className="text-whatsapp-text">Report content for project {selectedProject.name}</p>
