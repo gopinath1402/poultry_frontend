@@ -299,11 +299,12 @@ export default function ExpensePage({ selectedProject }: ExpensePageProps) {
                             <TableHead>
                                 <Select onValueChange={setFilterCategory} defaultValue="all">
                                     <SelectTrigger className="w-[100px] border-none">
-                                        <SelectValue placeholder="Filter by Category" />
+                                        <span>Category</span>
+                                        {/* <SelectValue placeholder="Filter by Category" /> */}
                                     </SelectTrigger>
                                     <SelectContent>
                                         <ScrollArea className="h-[200px] w-[200px] rounded-md border">
-                                            <SelectItem value="all">Category</SelectItem>
+                                            <SelectItem value="all">All Categories</SelectItem>
                                             {expenseCategories.map((category) => (
                                                 <SelectItem key={category} value={category}>{category}</SelectItem>
                                             ))}

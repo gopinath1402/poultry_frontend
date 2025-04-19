@@ -299,11 +299,11 @@ export default function IncomePage({ selectedProject }: IncomePageProps) {
                             <TableHead>
                                 <Select onValueChange={setFilterCategory} defaultValue="all">
                                     <SelectTrigger className="w-[100px] border-none">
-                                        <SelectValue placeholder="Filter by Category" />
+                                        <span>Category</span>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <ScrollArea className="h-[200px] w-[200px] rounded-md border">
-                                            <SelectItem value="all">Category</SelectItem>
+                                            <SelectItem value="all">All Categories</SelectItem>
                                             {incomeCategories.map((category) => (
                                                 <SelectItem key={category} value={category}>{category}</SelectItem>
                                             ))}
